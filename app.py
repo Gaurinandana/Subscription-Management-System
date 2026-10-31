@@ -58,6 +58,9 @@ def create_app():
     from routes.taxes import taxes_bp
     app.register_blueprint(taxes_bp)
 
+    from routes.discounts import discounts_bp
+    app.register_blueprint(discounts_bp)
+
     # Create database tables
     with app.app_context():
         db.create_all()
