@@ -1,625 +1,360 @@
 import React, { useState } from 'react';
-import { useApp } from '../context/AppContext';
-import { BillingFrequency, Product, ProductVariant } from '../types';
-import {
-  Package,
-  Plus,
-  Layers,
-  Calendar,
-  DollarSign,
-  ShieldAlert,
-  Sparkles,
-  Tag,
-  CheckCircle2,
-  XCircle,
-  X,
-  FileText,
-  Clock,
-  Briefcase,
+import { 
+  Package, Layers, Plus, Search, CheckCircle2, 
+  X, Tag, ShieldCheck 
 } from 'lucide-react';
+import { useApp } from '../context/AppContext';
 
 export const ProductsPlans: React.FC = () => {
-  const { products, plans, addProduct, addPlan, currentUser } = useApp();
-  const isAdmin = currentUser.role === 'admin';
+  const { products, plans, createProduct, createPlan, addToast } = useApp();
 
   const [activeTab, setActiveTab] = useState<'products' | 'plans'>('products');
-  const [isAddProductOpen, setIsAddProductOpen] = useState(false);
-  const [isAddPlanOpen, setIsAddPlanOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
 
-  // New Product Form State (Scene 2)
-  const [productName, setProductName] = useState('');
-  const [productType, setProductType] = useState<Product['type']>('SaaS');
-  const [salesPrice, setSalesPrice] = useState<number>(450);
-  const [costPrice, setCostPrice] = useState<number>(120);
-  const [notes, setNotes] = useState('');
-  const [variants, setVariants] = useState<{ brand: string; extraPrice: number }[]>([
-    { brand: 'Standard Edition', extraPrice: 0 },
-    { brand: 'Odoo Powered Edition', extraPrice: 560 }, // Scene 2 exact requirement
-  ]);
+  // Modals
+  const [isProductModalOpen, setIsProductModalOpen] = useState(false);
+  const [isPlanModalOpen, setIsPlanModalOpen] = useState(false);
 
-  // New Plan Form State (Scene 2)
+  // New Product Form
+  const [prodName, setProdName] = useState('');
+  const [prodType, setProdType] = useState<'SaaS' | 'Software' | 'Service' | 'Add-on' | 'Hardware'>('SaaS');
+  const [prodSalesPrice, setProdSalesPrice] = useState(500);
+  const [prodCostPrice, setProdCostPrice] = useState(150);
+
+  // New Plan Form
   const [planName, setPlanName] = useState('');
-  const [planCost, setPlanCost] = useState<number>(1010);
-  const [billingFrequency, setBillingFrequency] = useState<BillingFrequency>('monthly');
-  const [minQuantity, setMinQuantity] = useState<number>(1);
-  const [startDate, setStartDate] = useState('2026-01-01');
-  const [endDate, setEndDate] = useState('2026-12-31');
-  const [autoCloseOnEnd, setAutoCloseOnEnd] = useState(false);
-  const [canCloseEarly, setCanCloseEarly] = useState(true);
-  const [canPause, setCanPause] = useState(true);
-  const [canRenew, setCanRenew] = useState(true);
-  const [planDescription, setPlanDescription] = useState('');
+  const [planCost, setPlanCost] = useState(299);
+  const [billingFreq, setBillingFreq] = useState<'monthly' | 'yearly'>('monthly');
 
-  const handleAddVariant = () => {
-    setVariants([...variants, { brand: '', extraPrice: 0 }]);
-  };
+  const filteredProducts = products.filter(p => 
+    p.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    (p.type || '').toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
-  const handleUpdateVariant = (index: number, brand: string, extraPrice: number) => {
-    const updated = [...variants];
-    updated[index] = { brand, extraPrice };
-    setVariants(updated);
-  };
-
-  const handleRemoveVariant = (index: number) => {
-    setVariants(variants.filter((_, idx) => idx !== index));
-  };
+  const filteredPlans = plans.filter(p => 
+    p.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    p.billingFrequency.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
   const handleCreateProduct = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!isAdmin) return;
+    if (!prodName.trim()) return;
 
-    const formattedVariants: ProductVariant[] = variants.map((v, i) => ({
-      id: `var-${Date.now()}-${i}`,
-      brand: v.brand || 'Variant',
-      extraPrice: v.extraPrice || 0,
-    }));
-
-    addProduct({
-      name: productName,
-      type: productType,
-      salesPrice,
-      costPrice,
-      notes,
-      variants: formattedVariants,
+    createProduct({
+      name: prodName,
+      type: prodType,
+      salesPrice: Number(prodSalesPrice),
+      costPrice: Number(prodCostPrice),
+      notes: '',
+      variants: [{ id: `var-${Date.now()}`, brand: 'Enterprise Tier', extraPrice: 560 }],
     });
 
-    setIsAddProductOpen(false);
-    setProductName('');
-    setNotes('');
+    setProdName('');
+    setIsProductModalOpen(false);
   };
 
   const handleCreatePlan = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!isAdmin) return;
+    if (!planName.trim()) return;
 
-    addPlan({
+    createPlan({
       name: planName,
-      cost: planCost,
-      billingFrequency,
-      minQuantity,
-      startDate,
-      endDate,
-      autoCloseOnEnd,
-      canCloseEarly,
-      canPause,
-      canRenew,
-      description: planDescription,
+      cost: Number(planCost),
+      billingFrequency: billingFreq,
+      minQuantity: 1,
+      startDate: new Date().toISOString().split('T')[0],
+      endDate: '2027-12-31',
+      autoCloseOnEnd: false,
+      canCloseEarly: true,
+      canPause: true,
+      canRenew: true,
     });
 
-    setIsAddPlanOpen(false);
     setPlanName('');
-    setPlanDescription('');
+    setIsPlanModalOpen(false);
   };
 
   return (
-    <div className="space-y-6 animate-in fade-in duration-300 text-slate-100">
-      {/* Header */}
-      <div className="bg-slate-900 p-6 rounded-2xl border border-slate-800 shadow-xl flex flex-col md:flex-row md:items-center justify-between gap-4">
-        <div>
-          <div className="flex items-center gap-2 text-xs font-bold text-purple-400 uppercase tracking-wider mb-1">
-            <Sparkles className="w-4 h-4" />
-            <span>Scene 2: Launching a New Plan & Products</span>
+    <div className="space-y-6">
+      {/* 1. Header Banner */}
+      <div className="revops-card rounded-2xl p-6 lg:p-7 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-5 bg-white border border-slate-200">
+        <div className="space-y-1">
+          <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-indigo-50 border border-indigo-100 text-indigo-700 text-xs font-semibold">
+            <Package className="w-3.5 h-3.5 text-indigo-600" />
+            <span>Product Catalog</span>
           </div>
-          <h1 className="text-2xl font-extrabold text-white tracking-tight">
-            Products, Variants & Plans Catalog
+          <h1 className="text-2xl font-bold tracking-tight text-slate-900">
+            Products, Pricing & Plans
           </h1>
-          <p className="text-xs text-slate-400 mt-1 max-w-xl">
-            Configure subscription offerings with brand variants (e.g. Odoo brand adds +$560),
-            billing frequencies (daily, weekly, monthly, yearly), and lifecycle closure rules.
+          <p className="text-sm text-slate-500">
+            Configure standalone products, recurring subscription tiers, and edition variants.
           </p>
         </div>
 
-        {/* Action button (Admin only) */}
-        {isAdmin ? (
-          <div className="flex items-center gap-2">
-            {activeTab === 'products' ? (
-              <button
-                onClick={() => setIsAddProductOpen(true)}
-                className="flex items-center gap-2 px-4 py-2.5 bg-purple-600 hover:bg-purple-700 text-white rounded-xl text-xs font-bold transition shadow-sm hover:shadow"
-              >
-                <Plus className="w-4 h-4" />
-                <span>Launch New Product</span>
-              </button>
-            ) : (
-              <button
-                onClick={() => setIsAddPlanOpen(true)}
-                className="flex items-center gap-2 px-4 py-2.5 bg-purple-600 hover:bg-purple-700 text-white rounded-xl text-xs font-bold transition shadow-sm hover:shadow"
-              >
-                <Plus className="w-4 h-4" />
-                <span>Configure New Plan</span>
-              </button>
-            )}
-          </div>
-        ) : (
-          <div className="flex items-center gap-2 px-3 py-1.5 bg-amber-950/60 text-amber-300 border border-amber-800/60 rounded-xl text-xs font-semibold">
-            <ShieldAlert className="w-4 h-4 text-amber-400 shrink-0" />
-            <span>Read-Only (Admin Access Required to Launch)</span>
-          </div>
-        )}
-      </div>
-
-      {/* Tabs */}
-      <div className="flex border-b border-slate-800 bg-slate-900 rounded-2xl p-2 gap-2 border shadow-xl">
-        <button
-          onClick={() => setActiveTab('products')}
-          className={`flex-1 py-2 text-xs font-bold rounded-xl transition flex items-center justify-center gap-2 ${
-            activeTab === 'products'
-              ? 'bg-purple-600 text-white shadow-xs'
-              : 'text-slate-400 hover:bg-slate-800 hover:text-white'
-          }`}
-        >
-          <Package className="w-4 h-4" />
-          <span>Products & Brand Variants ({products.length})</span>
-        </button>
-        <button
-          onClick={() => setActiveTab('plans')}
-          className={`flex-1 py-2 text-xs font-bold rounded-xl transition flex items-center justify-center gap-2 ${
-            activeTab === 'plans'
-              ? 'bg-purple-600 text-white shadow-xs'
-              : 'text-slate-400 hover:bg-slate-800 hover:text-white'
-          }`}
-        >
-          <Layers className="w-4 h-4" />
-          <span>Subscription Plans & Rules ({plans.length})</span>
-        </button>
-      </div>
-
-      {/* Tab 1: Products & Variants */}
-      {activeTab === 'products' && (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {products.map((prod) => (
-            <div
-              key={prod.id}
-              className="bg-slate-900 p-5 rounded-2xl border border-slate-800 shadow-xl hover:border-purple-500/50 transition space-y-4 flex flex-col justify-between"
+        <div className="flex items-center gap-3">
+          <div className="flex p-1 bg-slate-100 rounded-xl border border-slate-200">
+            <button
+              onClick={() => setActiveTab('products')}
+              className={`px-4 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
+                activeTab === 'products'
+                  ? 'bg-white text-indigo-700 shadow-xs'
+                  : 'text-slate-600 hover:text-slate-900'
+              }`}
             >
-              <div>
-                <div className="flex items-start justify-between gap-2">
-                  <div>
-                    <span className="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-full bg-purple-950/80 text-purple-300 border border-purple-800/60">
-                      {prod.type}
-                    </span>
-                    <h3 className="font-extrabold text-white text-base mt-1.5">{prod.name}</h3>
-                  </div>
-                  <div className="text-right">
-                    <span className="text-lg font-black text-white font-mono">
-                      ${prod.salesPrice}
-                    </span>
-                    <span className="text-[10px] text-slate-400 block">Base Price</span>
-                  </div>
-                </div>
+              Products ({products.length})
+            </button>
+            <button
+              onClick={() => setActiveTab('plans')}
+              className={`px-4 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
+                activeTab === 'plans'
+                  ? 'bg-white text-indigo-700 shadow-xs'
+                  : 'text-slate-600 hover:text-slate-900'
+              }`}
+            >
+              Subscription Plans ({plans.length})
+            </button>
+          </div>
 
-                <p className="text-xs text-slate-400 mt-2 leading-relaxed">{prod.notes}</p>
+          <button
+            onClick={() => activeTab === 'products' ? setIsProductModalOpen(true) : setIsPlanModalOpen(true)}
+            className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-semibold text-white bg-indigo-600 hover:bg-indigo-700 shadow-2xs transition-colors cursor-pointer"
+          >
+            <Plus className="w-3.5 h-3.5" />
+            <span>New {activeTab === 'products' ? 'Product' : 'Plan'}</span>
+          </button>
+        </div>
+      </div>
 
-                {/* Variants List (Scene 2) */}
-                <div className="mt-4 pt-3 border-t border-slate-800 space-y-1.5">
-                  <div className="text-[11px] font-bold text-slate-300 flex items-center gap-1.5">
-                    <Tag className="w-3.5 h-3.5 text-purple-400" />
-                    <span>Brand & Feature Variants:</span>
-                  </div>
-                  <div className="space-y-1">
-                    {prod.variants.map((v) => (
-                      <div
-                        key={v.id}
-                        className="flex items-center justify-between p-2 rounded-xl bg-slate-950/60 border border-slate-800 text-xs"
-                      >
-                        <span className="font-medium text-slate-200">{v.brand}</span>
-                        <span className="font-mono font-bold text-purple-400">
-                          {v.extraPrice > 0 ? `+$${v.extraPrice}` : 'Included ($0)'}
+      {/* 2. Content */}
+      {activeTab === 'products' ? (
+        <div className="revops-card rounded-2xl overflow-hidden bg-white border border-slate-200">
+          <div className="p-5 border-b border-slate-200 flex items-center justify-between gap-4">
+            <div className="relative flex-1 max-w-md">
+              <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="Search products by title or type..."
+                className="w-full pl-9 pr-4 py-2 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-800 placeholder:text-slate-400 focus:outline-none focus:border-indigo-500 transition-colors"
+              />
+            </div>
+          </div>
+
+          <div className="overflow-x-auto">
+            <table className="w-full text-left border-collapse">
+              <thead>
+                <tr className="border-b border-slate-200 bg-slate-50 text-[11px] font-bold uppercase tracking-wider text-slate-500">
+                  <th className="py-3 px-6">Product Name</th>
+                  <th className="py-3 px-6">Type</th>
+                  <th className="py-3 px-6">Variants Available</th>
+                  <th className="py-3 px-6 text-right">Cost Price</th>
+                  <th className="py-3 px-6 text-right">Sales Price</th>
+                  <th className="py-3 px-6 text-right">Gross Margin</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-slate-100 text-sm">
+                {filteredProducts.map((p) => {
+                  const margin = p.salesPrice - p.costPrice;
+                  const marginPct = ((margin / p.salesPrice) * 100).toFixed(0);
+                  return (
+                    <tr key={p.id} className="hover:bg-slate-50/70 transition-colors">
+                      <td className="py-4 px-6 font-semibold text-slate-900 text-xs">
+                        {p.name}
+                      </td>
+                      <td className="py-4 px-6">
+                        <span className="inline-flex items-center px-2 py-0.5 rounded-md text-[11px] font-medium bg-slate-100 text-slate-700 border border-slate-200">
+                          {p.type || 'SaaS'}
+                        </span>
+                      </td>
+                      <td className="py-4 px-6 text-xs text-slate-600">
+                        {p.variants && p.variants.length > 0 ? (
+                          <span className="inline-flex items-center gap-1 text-indigo-700 bg-indigo-50 px-2 py-0.5 rounded border border-indigo-100 font-medium">
+                            <Tag className="w-3 h-3" />
+                            <span>{p.variants[0].brand} (+${p.variants[0].extraPrice})</span>
+                          </span>
+                        ) : (
+                          <span className="text-slate-400">None</span>
+                        )}
+                      </td>
+                      <td className="py-4 px-6 text-right font-mono text-slate-500 text-xs">
+                        ${p.costPrice.toFixed(2)}
+                      </td>
+                      <td className="py-4 px-6 text-right font-mono font-bold text-slate-900 text-xs">
+                        ${p.salesPrice.toFixed(2)}
+                      </td>
+                      <td className="py-4 px-6 text-right font-mono text-emerald-600 font-bold text-xs">
+                        ${margin.toFixed(2)} ({marginPct}%)
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      ) : (
+        <div className="revops-card rounded-2xl overflow-hidden bg-white border border-slate-200">
+          <div className="p-5 border-b border-slate-200 flex items-center justify-between gap-4">
+            <div className="relative flex-1 max-w-md">
+              <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="Search subscription plans..."
+                className="w-full pl-9 pr-4 py-2 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-800 placeholder:text-slate-400 focus:outline-none focus:border-indigo-500 transition-colors"
+              />
+            </div>
+          </div>
+
+          <div className="overflow-x-auto">
+            <table className="w-full text-left border-collapse">
+              <thead>
+                <tr className="border-b border-slate-200 bg-slate-50 text-[11px] font-bold uppercase tracking-wider text-slate-500">
+                  <th className="py-3 px-6">Plan Name</th>
+                  <th className="py-3 px-6">Frequency</th>
+                  <th className="py-3 px-6">Recurring Cost</th>
+                  <th className="py-3 px-6">Lifecycle Rules</th>
+                  <th className="py-3 px-6 text-right">Min Qty</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-slate-100 text-sm">
+                {filteredPlans.map((plan) => (
+                  <tr key={plan.id} className="hover:bg-slate-50/70 transition-colors">
+                    <td className="py-4 px-6 font-semibold text-slate-900 text-xs">
+                      {plan.name}
+                    </td>
+                    <td className="py-4 px-6">
+                      <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-semibold bg-indigo-50 text-indigo-700 border border-indigo-200 capitalize">
+                        {plan.billingFrequency}
+                      </span>
+                    </td>
+                    <td className="py-4 px-6 font-mono font-bold text-slate-900 text-xs">
+                      ${plan.cost.toFixed(2)}
+                    </td>
+                    <td className="py-4 px-6">
+                      <div className="flex items-center gap-2 text-xs">
+                        <span className={`px-2 py-0.5 rounded text-[10px] font-medium ${plan.canPause ? 'bg-emerald-50 text-emerald-700' : 'bg-slate-100 text-slate-500'}`}>
+                          {plan.canPause ? '✓ Pauseable' : 'No Pause'}
+                        </span>
+                        <span className={`px-2 py-0.5 rounded text-[10px] font-medium ${plan.canCloseEarly ? 'bg-emerald-50 text-emerald-700' : 'bg-slate-100 text-slate-500'}`}>
+                          {plan.canCloseEarly ? '✓ Cancel Anytime' : 'Lock-in'}
                         </span>
                       </div>
-                    ))}
-                  </div>
-                </div>
-              </div>
-
-              <div className="pt-3 border-t border-slate-800 flex items-center justify-between text-[11px] text-slate-400">
-                <span>Cost Price: ${prod.costPrice}</span>
-                <span className="text-emerald-400 font-semibold">
-                  Margin: ${(prod.salesPrice - prod.costPrice)}/unit
-                </span>
-              </div>
-            </div>
-          ))}
+                    </td>
+                    <td className="py-4 px-6 text-right font-mono text-slate-700 text-xs">
+                      {plan.minQuantity} seat(s)
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </div>
       )}
 
-      {/* Tab 2: Subscription Plans & Lifecycle Rules */}
-      {activeTab === 'plans' && (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {plans.map((plan) => (
-            <div
-              key={plan.id}
-              className="bg-slate-900 p-5 rounded-2xl border border-slate-800 shadow-xl hover:border-purple-500/50 transition space-y-4 flex flex-col justify-between"
-            >
-              <div>
-                <div className="flex items-start justify-between gap-2">
-                  <div>
-                    <span className="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-full bg-blue-950/80 text-blue-300 border border-blue-800/60">
-                      {plan.billingFrequency} billing
-                    </span>
-                    <h3 className="font-extrabold text-white text-base mt-1.5">{plan.name}</h3>
-                  </div>
-                  <div className="text-right">
-                    <span className="text-xl font-black text-white font-mono">
-                      ${plan.cost.toLocaleString()}
-                    </span>
-                    <span className="text-[10px] text-slate-400 block">/{plan.billingFrequency}</span>
-                  </div>
-                </div>
-
-                <p className="text-xs text-slate-400 mt-2 leading-relaxed">
-                  {plan.description || 'Configured recurring plan with rules enforced plan-by-plan.'}
-                </p>
-
-                {/* Plan Lifecycle Safeguards (Scene 2) */}
-                <div className="mt-4 pt-3 border-t border-slate-800 space-y-2">
-                  <div className="text-[11px] font-bold text-slate-300">
-                    Plan Lifecycle Rules (Admin Configured):
-                  </div>
-                  <div className="grid grid-cols-2 gap-2 text-xs">
-                    <div className="flex items-center gap-1.5 p-2 bg-slate-950/60 rounded-xl border border-slate-800">
-                      {plan.autoCloseOnEnd ? (
-                        <CheckCircle2 className="w-3.5 h-3.5 text-purple-400 shrink-0" />
-                      ) : (
-                        <XCircle className="w-3.5 h-3.5 text-slate-600 shrink-0" />
-                      )}
-                      <span className="text-slate-300 text-[11px]">Auto-Close on End</span>
-                    </div>
-
-                    <div className="flex items-center gap-1.5 p-2 bg-slate-950/60 rounded-xl border border-slate-800">
-                      {plan.canCloseEarly ? (
-                        <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
-                      ) : (
-                        <XCircle className="w-3.5 h-3.5 text-slate-600 shrink-0" />
-                      )}
-                      <span className="text-slate-300 text-[11px]">Can Close Early</span>
-                    </div>
-
-                    <div className="flex items-center gap-1.5 p-2 bg-slate-950/60 rounded-xl border border-slate-800">
-                      {plan.canPause ? (
-                        <CheckCircle2 className="w-3.5 h-3.5 text-amber-400 shrink-0" />
-                      ) : (
-                        <XCircle className="w-3.5 h-3.5 text-slate-600 shrink-0" />
-                      )}
-                      <span className="text-slate-300 text-[11px]">Can Pause</span>
-                    </div>
-
-                    <div className="flex items-center gap-1.5 p-2 bg-slate-950/60 rounded-xl border border-slate-800">
-                      {plan.canRenew ? (
-                        <CheckCircle2 className="w-3.5 h-3.5 text-blue-400 shrink-0" />
-                      ) : (
-                        <XCircle className="w-3.5 h-3.5 text-slate-600 shrink-0" />
-                      )}
-                      <span className="text-slate-300 text-[11px]">Can Renew</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <div className="pt-3 border-t border-slate-800 flex items-center justify-between text-[11px] text-slate-400">
-                <span>Min Qty: {plan.minQuantity} seat(s)</span>
-                <span>Active: {plan.startDate} &rarr; {plan.endDate}</span>
-              </div>
-            </div>
-          ))}
-        </div>
-      )}
-
-      {/* Add Product Modal (Admin only - Scene 2) */}
-      {isAddProductOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm animate-in fade-in">
-          <div className="bg-slate-900 rounded-2xl shadow-2xl max-w-lg w-full border border-slate-800 overflow-hidden text-slate-100">
-            <div className="p-5 border-b border-slate-800 flex items-center justify-between bg-slate-950/60">
-              <h3 className="font-bold text-white text-sm">Launch New Product & Variants</h3>
-              <button
-                onClick={() => setIsAddProductOpen(false)}
-                className="p-1 text-slate-400 hover:text-white rounded-lg"
-              >
-                <X className="w-5 h-5" />
+      {/* New Product Modal */}
+      {isProductModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 backdrop-blur-xs p-4">
+          <div className="bg-white rounded-2xl max-w-md w-full p-6 border border-slate-200 shadow-xl space-y-4">
+            <div className="flex items-center justify-between pb-3 border-b border-slate-100">
+              <h3 className="text-base font-bold text-slate-900">Create Catalog Product</h3>
+              <button onClick={() => setIsProductModalOpen(false)} className="p-1 rounded text-slate-400 hover:text-slate-600">
+                <X className="w-4 h-4" />
               </button>
             </div>
-
-            <form onSubmit={handleCreateProduct} className="p-6 space-y-4 max-h-[80vh] overflow-y-auto">
+            <form onSubmit={handleCreateProduct} className="space-y-3">
               <div>
-                <label className="block text-xs font-semibold text-slate-300 mb-1">Product Name</label>
+                <label className="block text-xs font-semibold text-slate-700 mb-1">Product Name</label>
                 <input
                   type="text"
+                  value={prodName}
+                  onChange={(e) => setProdName(e.target.value)}
+                  placeholder="e.g. Analytics Platform Add-on"
+                  className="w-full px-3 py-2 rounded-xl bg-slate-50 border border-slate-200 text-xs"
                   required
-                  placeholder="e.g. Brightloop Analytics Engine"
-                  value={productName}
-                  onChange={(e) => setProductName(e.target.value)}
-                  className="w-full text-xs rounded-xl border border-slate-700 bg-slate-950 text-white px-3 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500"
                 />
               </div>
-
-              <div className="grid grid-cols-3 gap-3">
+              <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-xs font-semibold text-slate-300 mb-1">Type</label>
-                  <select
-                    value={productType}
-                    onChange={(e) => setProductType(e.target.value as any)}
-                    className="w-full text-xs rounded-xl border border-slate-700 bg-slate-950 text-white px-3 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500"
-                  >
-                    <option value="SaaS">SaaS</option>
-                    <option value="Service">Service</option>
-                    <option value="Add-on">Add-on</option>
-                    <option value="Hardware">Hardware</option>
-                  </select>
-                </div>
-
-                <div>
-                  <label className="block text-xs font-semibold text-slate-300 mb-1">Sales Price ($)</label>
+                  <label className="block text-xs font-semibold text-slate-700 mb-1">Cost Price ($)</label>
                   <input
                     type="number"
+                    value={prodCostPrice}
+                    onChange={(e) => setProdCostPrice(Number(e.target.value))}
+                    className="w-full px-3 py-2 rounded-xl bg-slate-50 border border-slate-200 text-xs font-mono"
                     required
-                    value={salesPrice}
-                    onChange={(e) => setSalesPrice(parseFloat(e.target.value) || 0)}
-                    className="w-full text-xs rounded-xl border border-slate-700 bg-slate-950 text-white px-3 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500 font-mono"
                   />
                 </div>
-
                 <div>
-                  <label className="block text-xs font-semibold text-slate-300 mb-1">Cost Price ($)</label>
+                  <label className="block text-xs font-semibold text-slate-700 mb-1">Sales Price ($)</label>
                   <input
                     type="number"
+                    value={prodSalesPrice}
+                    onChange={(e) => setProdSalesPrice(Number(e.target.value))}
+                    className="w-full px-3 py-2 rounded-xl bg-slate-50 border border-slate-200 text-xs font-mono"
                     required
-                    value={costPrice}
-                    onChange={(e) => setCostPrice(parseFloat(e.target.value) || 0)}
-                    className="w-full text-xs rounded-xl border border-slate-700 bg-slate-950 text-white px-3 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500 font-mono"
                   />
                 </div>
               </div>
-
-              <div>
-                <label className="block text-xs font-semibold text-slate-300 mb-1">Internal Notes</label>
-                <textarea
-                  rows={2}
-                  placeholder="Product specs, hosting requirements..."
-                  value={notes}
-                  onChange={(e) => setNotes(e.target.value)}
-                  className="w-full text-xs rounded-xl border border-slate-700 bg-slate-950 text-white px-3 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500"
-                />
-              </div>
-
-              {/* Variants Section (Scene 2) */}
-              <div className="pt-2 border-t border-slate-800 space-y-2">
-                <div className="flex items-center justify-between">
-                  <label className="text-xs font-bold text-slate-300">Product Variants (e.g. Brand)</label>
-                  <button
-                    type="button"
-                    onClick={handleAddVariant}
-                    className="text-purple-400 text-xs font-semibold hover:underline"
-                  >
-                    + Add Variant
-                  </button>
-                </div>
-
-                {variants.map((v, idx) => (
-                  <div key={idx} className="flex items-center gap-2">
-                    <input
-                      type="text"
-                      placeholder="Variant name (e.g. Odoo Brand)"
-                      value={v.brand}
-                      onChange={(e) => handleUpdateVariant(idx, e.target.value, v.extraPrice)}
-                      className="flex-1 text-xs rounded-xl border border-slate-700 bg-slate-950 text-white px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-purple-500"
-                    />
-                    <div className="w-28 relative">
-                      <span className="absolute left-2.5 top-1.5 text-xs text-slate-400">+$</span>
-                      <input
-                        type="number"
-                        placeholder="0"
-                        value={v.extraPrice}
-                        onChange={(e) =>
-                          handleUpdateVariant(idx, v.brand, parseFloat(e.target.value) || 0)
-                        }
-                        className="w-full pl-7 pr-2 py-1.5 text-xs rounded-xl border border-slate-700 bg-slate-950 text-white font-mono focus:outline-none focus:ring-2 focus:ring-purple-500"
-                      />
-                    </div>
-                    {variants.length > 1 && (
-                      <button
-                        type="button"
-                        onClick={() => handleRemoveVariant(idx)}
-                        className="text-slate-500 hover:text-rose-400 p-1"
-                      >
-                        <X className="w-4 h-4" />
-                      </button>
-                    )}
-                  </div>
-                ))}
-              </div>
-
-              <div className="pt-3 flex items-center justify-end gap-2">
-                <button
-                  type="button"
-                  onClick={() => setIsAddProductOpen(false)}
-                  className="px-3.5 py-2 text-xs font-semibold text-slate-400 hover:bg-slate-800 rounded-xl"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  className="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white font-bold text-xs rounded-xl shadow-sm"
-                >
-                  Launch Product
-                </button>
+              <div className="flex justify-end gap-2 pt-3 border-t border-slate-100">
+                <button type="button" onClick={() => setIsProductModalOpen(false)} className="px-4 py-2 text-xs font-semibold text-slate-600">Cancel</button>
+                <button type="submit" className="px-4 py-2 text-xs font-semibold text-white bg-indigo-600 rounded-xl">Save Product</button>
               </div>
             </form>
           </div>
         </div>
       )}
 
-      {/* Add Plan Modal (Admin only - Scene 2) */}
-      {isAddPlanOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm animate-in fade-in">
-          <div className="bg-slate-900 rounded-2xl shadow-2xl max-w-lg w-full border border-slate-800 overflow-hidden text-slate-100">
-            <div className="p-5 border-b border-slate-800 flex items-center justify-between bg-slate-950/60">
-              <h3 className="font-bold text-white text-sm">Configure Subscription Plan</h3>
-              <button
-                onClick={() => setIsAddPlanOpen(false)}
-                className="p-1 text-slate-400 hover:text-white rounded-lg"
-              >
-                <X className="w-5 h-5" />
+      {/* New Plan Modal */}
+      {isPlanModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 backdrop-blur-xs p-4">
+          <div className="bg-white rounded-2xl max-w-md w-full p-6 border border-slate-200 shadow-xl space-y-4">
+            <div className="flex items-center justify-between pb-3 border-b border-slate-100">
+              <h3 className="text-base font-bold text-slate-900">Create Subscription Plan</h3>
+              <button onClick={() => setIsPlanModalOpen(false)} className="p-1 rounded text-slate-400 hover:text-slate-600">
+                <X className="w-4 h-4" />
               </button>
             </div>
-
-            <form onSubmit={handleCreatePlan} className="p-6 space-y-4 max-h-[80vh] overflow-y-auto">
+            <form onSubmit={handleCreatePlan} className="space-y-3">
               <div>
-                <label className="block text-xs font-semibold text-slate-300 mb-1">Plan Name</label>
+                <label className="block text-xs font-semibold text-slate-700 mb-1">Plan Name</label>
                 <input
                   type="text"
-                  required
-                  placeholder="e.g. Brightloop Scale Pro"
                   value={planName}
                   onChange={(e) => setPlanName(e.target.value)}
-                  className="w-full text-xs rounded-xl border border-slate-700 bg-slate-950 text-white px-3 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                  placeholder="e.g. Starter Team Tier"
+                  className="w-full px-3 py-2 rounded-xl bg-slate-50 border border-slate-200 text-xs"
+                  required
                 />
               </div>
-
-              <div className="grid grid-cols-3 gap-3">
+              <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-xs font-semibold text-slate-300 mb-1">Cost ($)</label>
-                  <input
-                    type="number"
-                    required
-                    value={planCost}
-                    onChange={(e) => setPlanCost(parseFloat(e.target.value) || 0)}
-                    className="w-full text-xs rounded-xl border border-slate-700 bg-slate-950 text-white px-3 py-2 font-mono focus:outline-none focus:ring-2 focus:ring-purple-500"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-xs font-semibold text-slate-300 mb-1">Frequency</label>
+                  <label className="block text-xs font-semibold text-slate-700 mb-1">Billing Interval</label>
                   <select
-                    value={billingFrequency}
-                    onChange={(e) => setBillingFrequency(e.target.value as BillingFrequency)}
-                    className="w-full text-xs rounded-xl border border-slate-700 bg-slate-950 text-white px-3 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                    value={billingFreq}
+                    onChange={(e) => setBillingFreq(e.target.value as any)}
+                    className="w-full px-3 py-2 rounded-xl bg-slate-50 border border-slate-200 text-xs"
                   >
-                    <option value="daily">Daily</option>
-                    <option value="weekly">Weekly</option>
                     <option value="monthly">Monthly</option>
                     <option value="yearly">Yearly</option>
                   </select>
                 </div>
-
                 <div>
-                  <label className="block text-xs font-semibold text-slate-300 mb-1">Min Seats</label>
+                  <label className="block text-xs font-semibold text-slate-700 mb-1">Recurring Cost ($)</label>
                   <input
                     type="number"
-                    min="1"
+                    value={planCost}
+                    onChange={(e) => setPlanCost(Number(e.target.value))}
+                    className="w-full px-3 py-2 rounded-xl bg-slate-50 border border-slate-200 text-xs font-mono"
                     required
-                    value={minQuantity}
-                    onChange={(e) => setMinQuantity(parseInt(e.target.value) || 1)}
-                    className="w-full text-xs rounded-xl border border-slate-700 bg-slate-950 text-white px-3 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500"
                   />
                 </div>
               </div>
-
-              <div className="grid grid-cols-2 gap-3">
-                <div>
-                  <label className="block text-xs font-semibold text-slate-300 mb-1">Available From</label>
-                  <input
-                    type="date"
-                    required
-                    value={startDate}
-                    onChange={(e) => setStartDate(e.target.value)}
-                    className="w-full text-xs rounded-xl border border-slate-700 bg-slate-950 text-white px-3 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500"
-                  />
-                </div>
-                <div>
-                  <label className="block text-xs font-semibold text-slate-300 mb-1">Available Until</label>
-                  <input
-                    type="date"
-                    required
-                    value={endDate}
-                    onChange={(e) => setEndDate(e.target.value)}
-                    className="w-full text-xs rounded-xl border border-slate-700 bg-slate-950 text-white px-3 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500"
-                  />
-                </div>
-              </div>
-
-              {/* Lifecycle flags (Scene 2) */}
-              <div className="p-3 bg-slate-950/60 rounded-xl border border-slate-800 space-y-2">
-                <div className="text-xs font-bold text-slate-300">
-                  Lifecycle Rules (Scene 2 Plan Decider)
-                </div>
-
-                <div className="grid grid-cols-2 gap-2 text-xs text-slate-300">
-                  <label className="flex items-center gap-2 cursor-pointer">
-                    <input
-                      type="checkbox"
-                      checked={autoCloseOnEnd}
-                      onChange={(e) => setAutoCloseOnEnd(e.target.checked)}
-                      className="rounded text-purple-600 focus:ring-purple-500 bg-slate-900 border-slate-700"
-                    />
-                    <span>Auto-close on end</span>
-                  </label>
-
-                  <label className="flex items-center gap-2 cursor-pointer">
-                    <input
-                      type="checkbox"
-                      checked={canCloseEarly}
-                      onChange={(e) => setCanCloseEarly(e.target.checked)}
-                      className="rounded text-purple-600 focus:ring-purple-500 bg-slate-900 border-slate-700"
-                    />
-                    <span>Allow early closure</span>
-                  </label>
-
-                  <label className="flex items-center gap-2 cursor-pointer">
-                    <input
-                      type="checkbox"
-                      checked={canPause}
-                      onChange={(e) => setCanPause(e.target.checked)}
-                      className="rounded text-purple-600 focus:ring-purple-500 bg-slate-900 border-slate-700"
-                    />
-                    <span>Allow pausing</span>
-                  </label>
-
-                  <label className="flex items-center gap-2 cursor-pointer">
-                    <input
-                      type="checkbox"
-                      checked={canRenew}
-                      onChange={(e) => setCanRenew(e.target.checked)}
-                      className="rounded text-purple-600 focus:ring-purple-500 bg-slate-900 border-slate-700"
-                    />
-                    <span>Allow renewals</span>
-                  </label>
-                </div>
-              </div>
-
-              <div className="pt-3 flex items-center justify-end gap-2">
-                <button
-                  type="button"
-                  onClick={() => setIsAddPlanOpen(false)}
-                  className="px-3.5 py-2 text-xs font-semibold text-slate-400 hover:bg-slate-800 rounded-xl"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  className="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white font-bold text-xs rounded-xl shadow-sm"
-                >
-                  Create Plan
-                </button>
+              <div className="flex justify-end gap-2 pt-3 border-t border-slate-100">
+                <button type="button" onClick={() => setIsPlanModalOpen(false)} className="px-4 py-2 text-xs font-semibold text-slate-600">Cancel</button>
+                <button type="submit" className="px-4 py-2 text-xs font-semibold text-white bg-indigo-600 rounded-xl">Save Plan</button>
               </div>
             </form>
           </div>
@@ -628,3 +363,5 @@ export const ProductsPlans: React.FC = () => {
     </div>
   );
 };
+
+export default ProductsPlans;
