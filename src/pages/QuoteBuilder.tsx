@@ -221,14 +221,13 @@ export const QuoteBuilder: React.FC<QuoteBuilderProps> = ({ onNavigate }) => {
     const cust = customers.find((c) => c.id === selectedCustomerId) || customers[0];
     const plan = plans.find((p) => p.id === selectedPlanId) || plans[0];
 
-    // Expiry date calculation
     const expDate = new Date();
     expDate.setFullYear(expDate.getFullYear() + 1);
 
     const quoteExpDate = new Date();
     quoteExpDate.setDate(quoteExpDate.getDate() + validityDays);
 
-    const created = createSubscription({
+    createSubscription({
       customerId: cust.id,
       customerName: cust.name,
       customerEmail: cust.email,
@@ -254,18 +253,18 @@ export const QuoteBuilder: React.FC<QuoteBuilderProps> = ({ onNavigate }) => {
   };
 
   return (
-    <div className="space-y-6 animate-in fade-in duration-300">
+    <div className="space-y-6 animate-in fade-in duration-300 text-slate-100">
       {/* Top Banner */}
-      <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-2xs flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div className="bg-slate-900 p-6 rounded-2xl border border-slate-800 shadow-xl flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <div className="flex items-center gap-2 text-xs font-bold text-purple-700 uppercase tracking-wider mb-1">
+          <div className="flex items-center gap-2 text-xs font-bold text-purple-400 uppercase tracking-wider mb-1">
             <Sparkles className="w-4 h-4" />
             <span>Scene 3: Sales Rep Offer & Quotation Templates</span>
           </div>
-          <h1 className="text-2xl font-extrabold text-slate-900 tracking-tight">
+          <h1 className="text-2xl font-extrabold text-white tracking-tight">
             Quotation & Offer Builder
           </h1>
-          <p className="text-xs text-slate-500 mt-1">
+          <p className="text-xs text-slate-400 mt-1">
             Start from a standard template or craft a custom proposal with variants, taxes, and discounts.
           </p>
         </div>
@@ -275,21 +274,21 @@ export const QuoteBuilder: React.FC<QuoteBuilderProps> = ({ onNavigate }) => {
         {/* Left Column: Form Details & Lines (2 cols) */}
         <div className="lg:col-span-2 space-y-6">
           {/* Template & Customer Preset Box */}
-          <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-2xs space-y-4">
-            <h3 className="text-sm font-bold text-slate-900 flex items-center gap-2">
-              <FileSpreadsheet className="w-4 h-4 text-purple-600" />
+          <div className="bg-slate-900 p-5 rounded-2xl border border-slate-800 shadow-xl space-y-4">
+            <h3 className="text-sm font-bold text-white flex items-center gap-2">
+              <FileSpreadsheet className="w-4 h-4 text-purple-400" />
               <span>1. Choose Template & Client</span>
             </h3>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <label className="block text-xs font-semibold text-slate-700 mb-1">
+                <label className="block text-xs font-semibold text-slate-300 mb-1">
                   Start from Quotation Template
                 </label>
                 <select
                   value={selectedTemplateId}
                   onChange={(e) => handleTemplateChange(e.target.value)}
-                  className="w-full text-xs rounded-xl border border-slate-200 px-3 py-2 bg-slate-50 text-slate-800 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                  className="w-full text-xs rounded-xl border border-slate-700 px-3 py-2 bg-slate-950 text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
                 >
                   <option value="">Blank Offer (Custom)</option>
                   {templates.map((t) => (
@@ -301,13 +300,13 @@ export const QuoteBuilder: React.FC<QuoteBuilderProps> = ({ onNavigate }) => {
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-slate-700 mb-1">
+                <label className="block text-xs font-semibold text-slate-300 mb-1">
                   Select Customer
                 </label>
                 <select
                   value={selectedCustomerId}
                   onChange={(e) => setSelectedCustomerId(e.target.value)}
-                  className="w-full text-xs rounded-xl border border-slate-200 px-3 py-2 bg-white text-slate-800 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                  className="w-full text-xs rounded-xl border border-slate-700 px-3 py-2 bg-slate-950 text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
                 >
                   {customers.map((c) => (
                     <option key={c.id} value={c.id}>
@@ -318,13 +317,13 @@ export const QuoteBuilder: React.FC<QuoteBuilderProps> = ({ onNavigate }) => {
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-slate-700 mb-1">
+                <label className="block text-xs font-semibold text-slate-300 mb-1">
                   Billing Plan Base
                 </label>
                 <select
                   value={selectedPlanId}
                   onChange={(e) => setSelectedPlanId(e.target.value)}
-                  className="w-full text-xs rounded-xl border border-slate-200 px-3 py-2 bg-white text-slate-800 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                  className="w-full text-xs rounded-xl border border-slate-700 px-3 py-2 bg-slate-950 text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
                 >
                   {plans.map((p) => (
                     <option key={p.id} value={p.id}>
@@ -335,13 +334,13 @@ export const QuoteBuilder: React.FC<QuoteBuilderProps> = ({ onNavigate }) => {
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-slate-700 mb-1">
+                <label className="block text-xs font-semibold text-slate-300 mb-1">
                   Payment Terms
                 </label>
                 <select
                   value={paymentTerms}
                   onChange={(e) => setPaymentTerms(e.target.value as any)}
-                  className="w-full text-xs rounded-xl border border-slate-200 px-3 py-2 bg-white text-slate-800 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                  className="w-full text-xs rounded-xl border border-slate-700 px-3 py-2 bg-slate-950 text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
                 >
                   <option value="Due on Receipt">Due on Receipt</option>
                   <option value="Net 15">Net 15 Days</option>
@@ -353,15 +352,15 @@ export const QuoteBuilder: React.FC<QuoteBuilderProps> = ({ onNavigate }) => {
           </div>
 
           {/* Line Items Builder (Products & Variants) */}
-          <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-2xs space-y-4">
+          <div className="bg-slate-900 p-5 rounded-2xl border border-slate-800 shadow-xl space-y-4">
             <div className="flex items-center justify-between">
-              <h3 className="text-sm font-bold text-slate-900 flex items-center gap-2">
-                <Building className="w-4 h-4 text-purple-600" />
+              <h3 className="text-sm font-bold text-white flex items-center gap-2">
+                <Building className="w-4 h-4 text-purple-400" />
                 <span>2. Products, Variants & Seats</span>
               </h3>
               <button
                 onClick={handleAddLine}
-                className="px-3 py-1.5 bg-purple-50 text-purple-700 hover:bg-purple-100 text-xs font-bold rounded-xl transition flex items-center gap-1.5"
+                className="px-3 py-1.5 bg-purple-950/60 hover:bg-purple-900 border border-purple-800/60 text-purple-300 text-xs font-bold rounded-xl transition flex items-center gap-1.5"
               >
                 <Plus className="w-3.5 h-3.5" />
                 <span>Add Product Line</span>
@@ -374,18 +373,18 @@ export const QuoteBuilder: React.FC<QuoteBuilderProps> = ({ onNavigate }) => {
                 return (
                   <div
                     key={line.id}
-                    className="p-3.5 rounded-xl border border-slate-200 bg-slate-50/50 space-y-3"
+                    className="p-3.5 rounded-xl border border-slate-800 bg-slate-950/60 space-y-3"
                   >
                     <div className="grid grid-cols-1 sm:grid-cols-12 gap-3 items-center">
                       {/* Product Selector */}
                       <div className="sm:col-span-5">
-                        <label className="block text-[11px] font-semibold text-slate-500 mb-1">
+                        <label className="block text-[11px] font-semibold text-slate-400 mb-1">
                           Product
                         </label>
                         <select
                           value={line.productId}
                           onChange={(e) => handleProductChange(idx, e.target.value)}
-                          className="w-full text-xs rounded-xl border border-slate-200 px-2.5 py-1.5 bg-white text-slate-800 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                          className="w-full text-xs rounded-xl border border-slate-700 px-2.5 py-1.5 bg-slate-900 text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
                         >
                           {products.map((p) => (
                             <option key={p.id} value={p.id}>
@@ -397,12 +396,12 @@ export const QuoteBuilder: React.FC<QuoteBuilderProps> = ({ onNavigate }) => {
 
                       {/* Variant Selector (Scene 2: Odoo brand adds 560) */}
                       <div className="sm:col-span-4">
-                        <label className="block text-[11px] font-semibold text-slate-500 mb-1">
+                        <label className="block text-[11px] font-semibold text-slate-400 mb-1">
                           Brand / Variant
                         </label>
                         <select
                           onChange={(e) => handleVariantChange(idx, e.target.value)}
-                          className="w-full text-xs rounded-xl border border-slate-200 px-2.5 py-1.5 bg-white text-slate-800 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                          className="w-full text-xs rounded-xl border border-slate-700 px-2.5 py-1.5 bg-slate-900 text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
                         >
                           <option value="">No Variant (Standard Base)</option>
                           {currentProd?.variants.map((v) => (
@@ -415,7 +414,7 @@ export const QuoteBuilder: React.FC<QuoteBuilderProps> = ({ onNavigate }) => {
 
                       {/* Quantity */}
                       <div className="sm:col-span-2">
-                        <label className="block text-[11px] font-semibold text-slate-500 mb-1">
+                        <label className="block text-[11px] font-semibold text-slate-400 mb-1">
                           Seats / Qty
                         </label>
                         <input
@@ -423,7 +422,7 @@ export const QuoteBuilder: React.FC<QuoteBuilderProps> = ({ onNavigate }) => {
                           min="1"
                           value={line.quantity}
                           onChange={(e) => handleQuantityChange(idx, parseInt(e.target.value) || 1)}
-                          className="w-full text-xs rounded-xl border border-slate-200 px-2.5 py-1.5 bg-white text-slate-800 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                          className="w-full text-xs rounded-xl border border-slate-700 px-2.5 py-1.5 bg-slate-900 text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
                         />
                       </div>
 
@@ -431,7 +430,7 @@ export const QuoteBuilder: React.FC<QuoteBuilderProps> = ({ onNavigate }) => {
                       <div className="sm:col-span-1 flex justify-end pt-5">
                         <button
                           onClick={() => handleRemoveLine(line.id)}
-                          className="text-slate-400 hover:text-rose-600 p-1.5 rounded-lg transition"
+                          className="text-slate-400 hover:text-rose-400 p-1.5 rounded-lg transition"
                           title="Remove Line"
                         >
                           <Trash2 className="w-4 h-4" />
@@ -439,12 +438,12 @@ export const QuoteBuilder: React.FC<QuoteBuilderProps> = ({ onNavigate }) => {
                       </div>
                     </div>
 
-                    <div className="flex items-center justify-between text-xs pt-1 border-t border-slate-200 text-slate-500">
+                    <div className="flex items-center justify-between text-xs pt-1 border-t border-slate-800 text-slate-400">
                       <span>
-                        Unit Price: <strong>${line.unitPrice.toLocaleString()}</strong> (incl. variant)
+                        Unit Price: <strong className="text-slate-200">${line.unitPrice.toLocaleString()}</strong> (incl. variant)
                       </span>
                       <span>
-                        Line Total: <strong className="text-slate-900">${line.amount.toLocaleString()}</strong>
+                        Line Total: <strong className="text-white">${line.amount.toLocaleString()}</strong>
                       </span>
                     </div>
                   </div>
@@ -456,15 +455,15 @@ export const QuoteBuilder: React.FC<QuoteBuilderProps> = ({ onNavigate }) => {
 
         {/* Right Column: Pricing Summary & Actions (1 col) */}
         <div className="space-y-6">
-          <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-2xs space-y-4">
-            <h3 className="text-sm font-bold text-slate-900 flex items-center gap-2">
-              <Percent className="w-4 h-4 text-purple-600" />
+          <div className="bg-slate-900 p-5 rounded-2xl border border-slate-800 shadow-xl space-y-4">
+            <h3 className="text-sm font-bold text-white flex items-center gap-2">
+              <Percent className="w-4 h-4 text-purple-400" />
               <span>3. Discounts & Pricing</span>
             </h3>
 
             {/* Discount Code Input (Scene 5) */}
             <div>
-              <label className="block text-xs font-semibold text-slate-700 mb-1">
+              <label className="block text-xs font-semibold text-slate-300 mb-1">
                 Promotional Discount Code
               </label>
               <div className="flex gap-2">
@@ -473,12 +472,12 @@ export const QuoteBuilder: React.FC<QuoteBuilderProps> = ({ onNavigate }) => {
                   placeholder="e.g. VOLUME20"
                   value={discountCode}
                   onChange={(e) => setDiscountCode(e.target.value)}
-                  className="w-full text-xs rounded-xl border border-slate-200 px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-purple-500 uppercase"
+                  className="w-full text-xs rounded-xl border border-slate-700 bg-slate-950 text-white px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-purple-500 uppercase"
                 />
                 <button
                   type="button"
                   onClick={handleApplyDiscount}
-                  className="px-3 py-1.5 bg-slate-900 hover:bg-slate-800 text-white font-semibold text-xs rounded-xl transition shrink-0"
+                  className="px-3 py-1.5 bg-purple-600 hover:bg-purple-700 text-white font-semibold text-xs rounded-xl transition shrink-0"
                 >
                   Apply
                 </button>
@@ -489,39 +488,39 @@ export const QuoteBuilder: React.FC<QuoteBuilderProps> = ({ onNavigate }) => {
             </div>
 
             {/* Financial Summary Breakdown */}
-            <div className="p-4 bg-slate-50 rounded-xl space-y-2.5 text-xs">
-              <div className="flex justify-between text-slate-600">
+            <div className="p-4 bg-slate-950/60 rounded-xl border border-slate-800 space-y-2.5 text-xs">
+              <div className="flex justify-between text-slate-400">
                 <span>Subtotal ({totalQuantity} items):</span>
-                <span className="font-mono font-semibold">${subtotal.toLocaleString()}</span>
+                <span className="font-mono text-slate-200 font-semibold">${subtotal.toLocaleString()}</span>
               </div>
 
               {appliedDiscount && (
-                <div className="flex justify-between text-emerald-600 font-semibold">
+                <div className="flex justify-between text-emerald-400 font-semibold">
                   <span>Discount ({appliedDiscount.code}):</span>
                   <span className="font-mono">-${appliedDiscount.amount.toLocaleString()}</span>
                 </div>
               )}
 
-              <div className="flex justify-between text-slate-600">
+              <div className="flex justify-between text-slate-400">
                 <span>Estimated Tax (10% standard):</span>
-                <span className="font-mono font-semibold">${taxTotal.toLocaleString()}</span>
+                <span className="font-mono text-slate-200 font-semibold">${taxTotal.toLocaleString()}</span>
               </div>
 
-              <div className="h-px bg-slate-200" />
+              <div className="h-px bg-slate-800" />
 
-              <div className="flex justify-between text-base font-extrabold text-slate-900">
+              <div className="flex justify-between text-base font-extrabold text-white">
                 <span>Offer Total:</span>
-                <span className="font-mono text-purple-700">${totalAmount.toLocaleString()}</span>
+                <span className="font-mono text-purple-400">${totalAmount.toLocaleString()}</span>
               </div>
             </div>
 
             {/* Validity settings */}
-            <div className="p-3 bg-purple-50/50 rounded-xl border border-purple-100 text-xs space-y-1">
-              <div className="font-bold text-purple-900 flex items-center gap-1.5">
-                <Calendar className="w-3.5 h-3.5 text-purple-600" />
+            <div className="p-3 bg-purple-950/40 rounded-xl border border-purple-800/60 text-xs space-y-1">
+              <div className="font-bold text-purple-300 flex items-center gap-1.5">
+                <Calendar className="w-3.5 h-3.5 text-purple-400" />
                 <span>Quotation Validity Period</span>
               </div>
-              <div className="text-[11px] text-purple-800">
+              <div className="text-[11px] text-purple-200">
                 Offer remains valid for <strong>{validityDays} days</strong> from issuance.
               </div>
             </div>
@@ -531,7 +530,7 @@ export const QuoteBuilder: React.FC<QuoteBuilderProps> = ({ onNavigate }) => {
               <button
                 type="button"
                 onClick={() => handleSubmit('Quotation')}
-                className="w-full py-2.5 px-4 bg-purple-600 hover:bg-purple-700 text-white font-bold text-xs rounded-xl transition shadow-sm hover:shadow flex items-center justify-center gap-1.5"
+                className="w-full py-2.5 px-4 bg-purple-600 hover:bg-purple-700 text-white font-bold text-xs rounded-xl transition shadow-md shadow-purple-600/30 flex items-center justify-center gap-1.5"
               >
                 <span>Send as Official Quotation</span>
                 <ArrowRight className="w-3.5 h-3.5" />
@@ -540,7 +539,7 @@ export const QuoteBuilder: React.FC<QuoteBuilderProps> = ({ onNavigate }) => {
               <button
                 type="button"
                 onClick={() => handleSubmit('Draft')}
-                className="w-full py-2 px-4 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold text-xs rounded-xl transition text-center"
+                className="w-full py-2 px-4 bg-slate-800 hover:bg-slate-700 text-slate-200 font-semibold text-xs rounded-xl transition text-center"
               >
                 Save as Draft
               </button>

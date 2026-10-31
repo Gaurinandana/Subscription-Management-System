@@ -97,10 +97,10 @@ export const Sidebar: React.FC<SidebarProps> = ({
   const navItems = isCustomer ? customerNav : internalNav;
 
   return (
-    <aside className="w-64 border-r border-slate-200 bg-white/70 backdrop-blur-md flex flex-col shrink-0 min-h-[calc(100vh-61px)]">
+    <aside className="w-64 border-r border-slate-800 bg-slate-900/60 backdrop-blur-md flex flex-col shrink-0 min-h-[calc(100vh-61px)]">
       <div className="p-4 flex-1 space-y-6">
         <div>
-          <div className="px-3 mb-2 text-[10px] font-extrabold uppercase tracking-wider text-slate-400">
+          <div className="px-3 mb-2 text-[10px] font-extrabold uppercase tracking-wider text-slate-500">
             {isCustomer ? 'Customer Access' : 'Business Operations'}
           </div>
 
@@ -113,8 +113,8 @@ export const Sidebar: React.FC<SidebarProps> = ({
                   onClick={() => onSelectTab(item.id)}
                   className={`w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-semibold transition ${
                     active
-                      ? 'bg-purple-600 text-white shadow-sm shadow-purple-600/30'
-                      : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100/80'
+                      ? 'bg-purple-600 text-white shadow-sm shadow-purple-600/30 font-bold'
+                      : 'text-slate-400 hover:text-white hover:bg-slate-800/80'
                   }`}
                 >
                   <div className="flex items-center gap-3">
@@ -126,7 +126,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                       className={`text-[9px] font-bold px-1.5 py-0.5 rounded-full ${
                         active
                           ? 'bg-purple-500 text-purple-100'
-                          : 'bg-slate-100 text-slate-500 border border-slate-200'
+                          : 'bg-slate-800 text-slate-400 border border-slate-700/80'
                       }`}
                     >
                       {item.badge}
@@ -139,21 +139,21 @@ export const Sidebar: React.FC<SidebarProps> = ({
         </div>
 
         {/* Quick RBAC indicator card */}
-        <div className="p-3.5 bg-gradient-to-br from-purple-50 to-indigo-50/60 rounded-2xl border border-purple-100/80 space-y-2">
-          <div className="flex items-center gap-2 text-xs font-bold text-purple-900">
-            <Sparkles className="w-4 h-4 text-purple-600" />
+        <div className="p-3.5 bg-gradient-to-br from-purple-950/40 to-indigo-950/40 rounded-2xl border border-purple-800/50 space-y-2">
+          <div className="flex items-center gap-2 text-xs font-bold text-purple-300">
+            <Sparkles className="w-4 h-4 text-purple-400" />
             <span>Brightloop Software</span>
           </div>
-          <p className="text-[11px] text-purple-800/80 leading-relaxed">
+          <p className="text-[11px] text-purple-200/80 leading-relaxed">
             You are logged in as{' '}
-            <strong className="text-purple-950 uppercase">{currentUser.role}</strong>.
+            <strong className="text-white uppercase">{currentUser.role}</strong>.
             {currentUser.role === 'admin' && ' You have full permissions over plans, rules, and staff.'}
             {currentUser.role === 'staff' && ' You can manage quotes, run billing day, and register payments.'}
             {currentUser.role === 'customer' && ' You can self-service manage your subscriptions and invoices.'}
           </p>
           <button
             onClick={onOpenVerificationGuide}
-            className="w-full mt-1 py-1.5 bg-white hover:bg-purple-50 border border-purple-200 rounded-xl text-[11px] font-bold text-purple-700 transition flex items-center justify-center gap-1 shadow-2xs"
+            className="w-full mt-1 py-1.5 bg-slate-800 hover:bg-slate-700 border border-slate-700 rounded-xl text-[11px] font-bold text-purple-300 transition flex items-center justify-center gap-1 shadow-2xs"
           >
             <span>Open PDF Checklist</span>
             <ExternalLink className="w-3 h-3" />
@@ -161,7 +161,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
         </div>
       </div>
 
-      <div className="p-4 border-t border-slate-100 text-center text-[11px] text-slate-400">
+      <div className="p-4 border-t border-slate-800 text-center text-[11px] text-slate-500">
         Brightloop v1.0 • Odoo Challenge
       </div>
     </aside>
