@@ -49,6 +49,8 @@ def create_app():
     from routes.invoices import invoices_bp
     app.register_blueprint(invoices_bp)
 
+    from routes.payments import payments_bp
+    app.register_blueprint(payments_bp)
 
     # Create database tables
     with app.app_context():
