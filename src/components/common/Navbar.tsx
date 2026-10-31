@@ -1,5 +1,5 @@
 import React from 'react';
-import { Layers, UserPlus, RefreshCw, UserCheck } from 'lucide-react';
+import { Layers, UserPlus, RefreshCw } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 
 interface NavbarProps {
@@ -9,6 +9,7 @@ interface NavbarProps {
 
 export const Navbar: React.FC<NavbarProps> = ({ onOpenAuth, onOpenGuide }) => {
   const { currentUser, refreshData, isLoading } = useApp();
+  const displayName = (currentUser as any)?.name || (currentUser as any)?.full_name || 'Administrator';
 
   return (
     <header className="h-16 border-b border-slate-200 bg-white/80 backdrop-blur-md sticky top-0 z-40 px-6 flex items-center justify-between">
@@ -61,11 +62,11 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenAuth, onOpenGuide }) => {
         {/* User Pill */}
         <div className="flex items-center gap-2.5 pl-1">
           <div className="w-8 h-8 rounded-full bg-indigo-600 text-white flex items-center justify-center font-bold text-xs shadow-xs">
-            {currentUser?.full_name?.charAt(0) || 'A'}
+            {displayName.charAt(0)}
           </div>
           <div className="hidden md:block text-left">
             <div className="text-xs font-semibold text-slate-800 leading-tight">
-              {currentUser?.full_name || 'Administrator'}
+              {displayName}
             </div>
             <div className="text-[10px] font-medium text-slate-400 capitalize">
               {currentUser?.role || 'Admin'}

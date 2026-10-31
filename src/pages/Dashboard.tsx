@@ -20,21 +20,21 @@ export const Dashboard: React.FC<DashboardProps> = ({ onNavigate }) => {
 
   const today = new Date().toISOString().split('T')[0];
 
-  const activeSubs = subscriptions.filter(s => (s.status || '').toLowerCase() === 'active');
-  const mrr = activeSubs.reduce((sum, sub) => sum + (Number(sub.unit_price || sub.totalAmount || 0)), 0);
+  const activeSubs = subscriptions.filter((s: any) => (s.status || '').toLowerCase() === 'active');
+  const mrr = activeSubs.reduce((sum: number, sub: any) => sum + Number(sub.totalAmount || sub.unit_price || 0), 0);
   const arr = mrr * 12;
 
-  const collectedRevenue = payments.reduce((sum, p) => sum + Number(p.amount || 0), 0);
+  const collectedRevenue = payments.reduce((sum: number, p: any) => sum + Number(p.amount || 0), 0);
 
-  const unpaidInvoices = invoices.filter(i => (i.status || '').toLowerCase() !== 'paid' && (i.status || '').toLowerCase() !== 'cancelled');
-  const outstandingBalance = unpaidInvoices.reduce((sum, i) => sum + (Number(i.total || 0) - Number(i.amount_paid || 0)), 0);
+  const unpaidInvoices = invoices.filter((i: any) => (i.status || '').toLowerCase() !== 'paid' && (i.status || '').toLowerCase() !== 'cancelled');
+  const outstandingBalance = unpaidInvoices.reduce((sum: number, i: any) => sum + (Number(i.total || 0) - Number(i.amountPaid || i.amount_paid || 0)), 0);
 
-  const overdueInvoices = unpaidInvoices.filter(i => i.due_date && i.due_date < today);
-  const overdueBalance = overdueInvoices.reduce((sum, i) => sum + (Number(i.total || 0) - Number(i.amount_paid || 0)), 0);
+  const overdueInvoices = unpaidInvoices.filter((i: any) => (i.dueDate || i.due_date) && (i.dueDate || i.due_date) < today);
+  const overdueBalance = overdueInvoices.reduce((sum: number, i: any) => sum + (Number(i.total || 0) - Number(i.amountPaid || i.amount_paid || 0)), 0);
 
-  const filteredSubs = subscriptions.filter(sub => {
-    const num = (sub.subscription_number || sub.number || '').toLowerCase();
-    const cust = (sub.customer_name || sub.customerName || '').toLowerCase();
+  const filteredSubs = subscriptions.filter((sub: any) => {
+    const num = (sub.number || sub.subscription_number || '').toLowerCase();
+    const cust = (sub.customerName || sub.customer_name || '').toLowerCase();
     const match = num.includes(searchQuery.toLowerCase()) || cust.includes(searchQuery.toLowerCase());
     const matchStatus = statusFilter === 'ALL' || (sub.status || '').toLowerCase() === statusFilter.toLowerCase();
     return match && matchStatus;
@@ -49,7 +49,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ onNavigate }) => {
   };
 
   return (
-    <div className="space-y-6 animate-entrance">
+    <div className="space-y-6">
       {/* 1. Header Banner */}
       <div className="revops-card rounded-2xl p-6 lg:p-7 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-5 bg-white border border-slate-200">
         <div className="space-y-1">
@@ -196,26 +196,26 @@ export const Dashboard: React.FC<DashboardProps> = ({ onNavigate }) => {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3">
-            {overdueInvoices.map((inv) => (
+            {overdueInvoices.map((inv: any) => (
               <div
                 key={inv.id}
                 className="flex items-center justify-between p-3.5 rounded-xl bg-white border border-rose-200 shadow-2xs"
               >
                 <div className="space-y-0.5">
                   <div className="flex items-center gap-2">
-                    <span className="font-mono text-xs font-bold text-slate-900">{inv.invoice_number || inv.number}</span>
+                    <span className="font-mono text-xs font-bold text-slate-900">{inv.number || inv.invoice_number}</span>
                     <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-rose-100 text-rose-700">
-                      Due {inv.due_date || inv.dueDate}
+                      Due {inv.dueDate || inv.due_date}
                     </span>
                   </div>
-                  <p className="text-xs text-slate-600">{inv.customer_name || inv.customerName}</p>
+                  <p className="text-xs text-slate-600">{inv.customerName || inv.customer_name}</p>
                   <p className="text-xs text-rose-600 font-bold font-mono">
-                    ${(Number(inv.total || 0) - Number(inv.amount_paid || 0)).toFixed(2)}
+                    ${(Number(inv.total || 0) - Number(inv.amountPaid || inv.amount_paid || 0)).toFixed(2)}
                   </p>
                 </div>
 
                 <button
-                  onClick={() => addToast(`Reminder dispatched for ${inv.invoice_number || inv.number}`, 'info')}
+                  onClick={() => addToast(`Reminder dispatched for ${inv.number || inv.invoice_number}`, 'info')}
                   className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-semibold bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 transition-colors cursor-pointer"
                 >
                   <Send className="w-3 h-3" />
@@ -256,7 +256,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ onNavigate }) => {
               <option value="active">Active</option>
               <option value="paused">Paused</option>
               <option value="draft">Draft</option>
-              <option value="cancelled">Cancelled</option>
+              <option value="closed">Closed</option>
             </select>
 
             {onNavigate && (
@@ -277,6 +277,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ onNavigate }) => {
               <tr className="border-b border-slate-200 bg-slate-50 text-[11px] font-bold uppercase tracking-wider text-slate-500">
                 <th className="py-3 px-6">Subscription</th>
                 <th className="py-3 px-6">Customer</th>
+                <th className="py-3 px-6">Plan</th>
                 <th className="py-3 px-6">Status</th>
                 <th className="py-3 px-6">Next Billing</th>
                 <th className="py-3 px-6 text-right">Recurring Amount</th>
@@ -285,20 +286,24 @@ export const Dashboard: React.FC<DashboardProps> = ({ onNavigate }) => {
             <tbody className="divide-y divide-slate-100 text-sm">
               {filteredSubs.length === 0 ? (
                 <tr>
-                  <td colSpan={5} className="py-8 text-center text-xs text-slate-400">
-                    No subscriptions found. Create your first quote or subscription to see it here!
+                  <td colSpan={6} className="py-8 text-center text-xs text-slate-400">
+                    No subscriptions found.
                   </td>
                 </tr>
               ) : (
-                filteredSubs.map((sub) => (
+                filteredSubs.map((sub: any) => (
                   <tr key={sub.id} className="hover:bg-slate-50/70 transition-colors">
                     <td className="py-3.5 px-6 font-mono font-semibold text-indigo-600 text-xs">
-                      {sub.subscription_number || sub.number}
+                      {sub.number || sub.subscription_number}
                     </td>
                     <td className="py-3.5 px-6">
                       <div className="font-medium text-slate-900 text-xs">
-                        {sub.customer_name || sub.customerName || `Customer #${sub.customer_id}`}
+                        {sub.customerName || sub.customer_name}
                       </div>
+                      <div className="text-[11px] text-slate-400">{sub.customerEmail}</div>
+                    </td>
+                    <td className="py-3.5 px-6 text-xs text-slate-600">
+                      {sub.planName}
                     </td>
                     <td className="py-3.5 px-6">
                       <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-medium border capitalize ${getStatusBadge(sub.status)}`}>
@@ -306,10 +311,10 @@ export const Dashboard: React.FC<DashboardProps> = ({ onNavigate }) => {
                       </span>
                     </td>
                     <td className="py-3.5 px-6 font-mono text-xs text-slate-600">
-                      {sub.next_billing_date || sub.nextBillingDate || '—'}
+                      {sub.nextBillingDate || sub.next_billing_date || '—'}
                     </td>
                     <td className="py-3.5 px-6 text-right font-mono font-bold text-slate-900 tabular-nums text-xs">
-                      ${Number(sub.unit_price || sub.totalAmount || 0).toFixed(2)}
+                      ${Number(sub.totalAmount || 0).toFixed(2)}
                     </td>
                   </tr>
                 ))

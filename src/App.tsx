@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useApp } from './context/AppContext';
 import { Navbar } from './components/common/Navbar';
 import { Sidebar } from './components/common/Sidebar';
@@ -6,7 +6,6 @@ import { ToastContainer } from './components/common/ToastContainer';
 import { AuthModal } from './components/auth/AuthModal';
 import { VerificationGuide } from './components/VerificationGuide';
 
-// Pages
 import { Dashboard } from './pages/Dashboard';
 import { Subscriptions } from './pages/Subscriptions';
 import { QuoteBuilder } from './pages/QuoteBuilder';
@@ -16,88 +15,59 @@ import { DiscountsTaxes } from './pages/DiscountsTaxes';
 import { StaffManagement } from './pages/StaffManagement';
 import { CustomerPortal } from './pages/CustomerPortal';
 
-export const App: React.FC = () => {
-  const { currentUser } = useApp();
-
-  // Active view tab
-  const [currentTab, setCurrentTab] = useState<string>('dashboard');
-
-  // Modals & Drawers
-  const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
-  const [isVerificationGuideOpen, setIsVerificationGuideOpen] = useState(false);
-
-  // Enforce customer landing view (Scene 1)
-  useEffect(() => {
-    if (currentUser.role === 'customer') {
-      setCurrentTab('portal');
-    } else if (currentTab === 'portal') {
-      setCurrentTab('dashboard');
-    }
-  }, [currentUser.role]);
+export default function App() {
+  const { activeTab, setActiveTab } = useApp();
+  const [isAuthOpen, setIsAuthOpen] = useState(false);
+  const [isGuideOpen, setIsGuideOpen] = useState(false);
 
   const renderActivePage = () => {
-    switch (currentTab) {
+    switch (activeTab) {
       case 'dashboard':
-        return <Dashboard onNavigate={(tab) => setCurrentTab(tab)} />;
+        return <Dashboard onNavigate={setActiveTab} />;
       case 'subscriptions':
-        return <Subscriptions onNavigate={(tab) => setCurrentTab(tab)} />;
+        return <Subscriptions onNavigate={setActiveTab} />;
       case 'quotes':
-        return <QuoteBuilder onNavigate={(tab) => setCurrentTab(tab)} />;
+      case 'quote-builder':
+        return <QuoteBuilder onNavigate={setActiveTab} />;
       case 'invoices':
         return <Invoices />;
       case 'products':
+      case 'products-plans':
         return <ProductsPlans />;
       case 'discounts':
+      case 'discounts-taxes':
         return <DiscountsTaxes />;
       case 'staff':
+      case 'staff-management':
         return <StaffManagement />;
       case 'portal':
+      case 'customer-portal':
         return <CustomerPortal />;
       default:
-        return <Dashboard onNavigate={(tab) => setCurrentTab(tab)} />;
+        return <Dashboard onNavigate={setActiveTab} />;
     }
   };
 
   return (
-    <div className="min-h-screen bg-slate-950 flex flex-col font-sans text-slate-100">
-      {/* Top Navigation Bar */}
-      <Navbar
-        onOpenVerificationGuide={() => setIsVerificationGuideOpen(true)}
-        onOpenAuth={() => setIsAuthModalOpen(true)}
+    <div className="min-h-screen flex flex-col bg-slate-50 text-slate-900">
+      <Navbar 
+        onOpenAuth={() => setIsAuthOpen(true)} 
+        onOpenGuide={() => setIsGuideOpen(true)} 
       />
 
-      {/* Main Workspace (Sidebar + Dynamic Page) */}
-      <div className="flex-1 flex overflow-hidden">
-        <Sidebar
-          currentTab={currentTab}
-          onSelectTab={(tab) => setCurrentTab(tab)}
-          onOpenVerificationGuide={() => setIsVerificationGuideOpen(true)}
-        />
+      <div className="flex flex-1 overflow-hidden">
+        <Sidebar activeTab={activeTab} setActiveTab={setActiveTab} />
 
-        <main className="flex-1 p-4 sm:p-6 lg:p-8 overflow-y-auto max-w-7xl mx-auto w-full">
-          {renderActivePage()}
+        <main className="flex-1 overflow-y-auto px-6 py-7 lg:px-10">
+          <div className="w-full max-w-[1600px] mx-auto space-y-7 pb-14">
+            {renderActivePage()}
+          </div>
         </main>
       </div>
 
-      {/* Global Toast Notifications Alert System */}
+      <AuthModal isOpen={isAuthOpen} onClose={() => setIsAuthOpen(false)} />
+      <VerificationGuide {...({ isOpen: isGuideOpen, onClose: () => setIsGuideOpen(false), onNavigate: setActiveTab, activeTab } as any)} />
       <ToastContainer />
-
-      {/* Scene 1 Customer Registration & Password Security Modal */}
-      <AuthModal
-        isOpen={isAuthModalOpen}
-        onClose={() => setIsAuthModalOpen(false)}
-        initialMode="signup"
-      />
-
-      {/* Verification & Learning Walkthrough Drawer */}
-      <VerificationGuide
-        isOpen={isVerificationGuideOpen}
-        onClose={() => setIsVerificationGuideOpen(false)}
-        onNavigate={(tab) => setCurrentTab(tab)}
-        onOpenAuth={() => setIsAuthModalOpen(true)}
-      />
     </div>
   );
-};
-
-export default App;
+}
