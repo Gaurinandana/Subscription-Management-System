@@ -1,245 +1,225 @@
-import React, { useState, useMemo } from 'react';
-import { useApp } from '../context/AppContext';
-import {
-  TrendingUp,
-  CreditCard,
-  AlertOctagon,
-  Users,
-  Repeat,
-  Zap,
-  Clock,
-  ArrowUpRight,
-  Filter,
-  Search,
-  CheckCircle2,
-  Calendar,
-  Send,
-  Sparkles,
+import React, { useState } from 'react';
+import { 
+  Zap, CheckCircle2, AlertTriangle, TrendingUp, 
+  DollarSign, Users, Clock, Search, Plus, Send, ArrowUpRight 
 } from 'lucide-react';
+import { useApp } from '../context/AppContext';
 
 interface DashboardProps {
-  onNavigate: (view: string) => void;
+  onNavigate?: (tab: string) => void;
 }
 
 export const Dashboard: React.FC<DashboardProps> = ({ onNavigate }) => {
-  const { subscriptions, invoices, payments, plans, runBillingDay, sendInvoice, addToast } = useApp();
+  const { 
+    subscriptions, invoices, payments, 
+    runBillingDay, addToast 
+  } = useApp();
 
-  // Search & Filter state for Finance Lead
-  const [searchTerm, setSearchTerm] = useState('');
-  const [selectedPlan, setSelectedPlan] = useState('all');
+  const [searchQuery, setSearchQuery] = useState('');
+  const [statusFilter, setStatusFilter] = useState<string>('ALL');
 
-  // Key Finance Metrics (Scene 7)
-  const activeSubs = useMemo(() => subscriptions.filter((s) => s.status === 'Active'), [subscriptions]);
-  const activeSubsCount = activeSubs.length;
+  const today = new Date().toISOString().split('T')[0];
 
-  const totalMRR = useMemo(() => {
-    return activeSubs.reduce((acc, sub) => acc + sub.totalAmount, 0);
-  }, [activeSubs]);
+  const activeSubs = subscriptions.filter(s => (s.status || '').toLowerCase() === 'active');
+  const mrr = activeSubs.reduce((sum, sub) => sum + (Number(sub.unit_price || sub.totalAmount || 0)), 0);
+  const arr = mrr * 12;
 
-  const totalARR = totalMRR * 12;
+  const collectedRevenue = payments.reduce((sum, p) => sum + Number(p.amount || 0), 0);
 
-  const totalCollectedRevenue = useMemo(() => {
-    return payments.reduce((acc, p) => acc + p.amount, 0);
-  }, [payments]);
+  const unpaidInvoices = invoices.filter(i => (i.status || '').toLowerCase() !== 'paid' && (i.status || '').toLowerCase() !== 'cancelled');
+  const outstandingBalance = unpaidInvoices.reduce((sum, i) => sum + (Number(i.total || 0) - Number(i.amount_paid || 0)), 0);
 
-  const totalOutstandingOwed = useMemo(() => {
-    return invoices
-      .filter((inv) => inv.status === 'Confirmed' || inv.status === 'Draft')
-      .reduce((acc, inv) => acc + (inv.total - inv.amountPaid), 0);
-  }, [invoices]);
+  const overdueInvoices = unpaidInvoices.filter(i => i.due_date && i.due_date < today);
+  const overdueBalance = overdueInvoices.reduce((sum, i) => sum + (Number(i.total || 0) - Number(i.amount_paid || 0)), 0);
 
-  const todayStr = new Date().toISOString().split('T')[0];
-  const overdueInvoices = useMemo(() => {
-    return invoices.filter(
-      (inv) => inv.status === 'Confirmed' && inv.dueDate < todayStr && inv.amountPaid < inv.total
-    );
-  }, [invoices, todayStr]);
+  const filteredSubs = subscriptions.filter(sub => {
+    const num = (sub.subscription_number || sub.number || '').toLowerCase();
+    const cust = (sub.customer_name || sub.customerName || '').toLowerCase();
+    const match = num.includes(searchQuery.toLowerCase()) || cust.includes(searchQuery.toLowerCase());
+    const matchStatus = statusFilter === 'ALL' || (sub.status || '').toLowerCase() === statusFilter.toLowerCase();
+    return match && matchStatus;
+  });
 
-  // Filtered subscriptions list for fast inspection
-  const filteredSubscriptions = useMemo(() => {
-    return subscriptions.filter((sub) => {
-      const matchSearch =
-        sub.number.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        sub.customerName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        sub.planName.toLowerCase().includes(searchTerm.toLowerCase());
-      const matchPlan = selectedPlan === 'all' || sub.planId === selectedPlan;
-      return matchSearch && matchPlan;
-    });
-  }, [subscriptions, searchTerm, selectedPlan]);
-
-  const handleChasePayment = (invoiceNumber: string, customerEmail: string) => {
-    addToast('success', 'Reminder Sent', `Overdue payment chase reminder emailed to ${customerEmail} for ${invoiceNumber}`);
+  const getStatusBadge = (status: string) => {
+    const s = (status || '').toLowerCase();
+    if (s === 'active') return 'bg-emerald-50 text-emerald-700 border-emerald-200';
+    if (s === 'paused') return 'bg-amber-50 text-amber-700 border-amber-200';
+    if (s === 'cancelled' || s === 'closed') return 'bg-rose-50 text-rose-700 border-rose-200';
+    return 'bg-slate-100 text-slate-700 border-slate-200';
   };
 
   return (
-    <div className="space-y-6 animate-in fade-in duration-300 text-slate-100">
-      {/* Top Banner & Scene 7 Header */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-slate-900 p-6 rounded-2xl border border-slate-800 shadow-xl">
-        <div>
-          <div className="flex items-center gap-2 text-xs font-bold text-purple-400 uppercase tracking-wider mb-1">
-            <Sparkles className="w-4 h-4" />
-            <span>Scene 7: The Finance Lead, at the End of the Month</span>
+    <div className="space-y-6 animate-entrance">
+      {/* 1. Header Banner */}
+      <div className="revops-card rounded-2xl p-6 lg:p-7 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-5 bg-white border border-slate-200">
+        <div className="space-y-1">
+          <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-indigo-50 border border-indigo-100 text-indigo-700 text-xs font-semibold">
+            <Zap className="w-3.5 h-3.5 text-indigo-600" />
+            <span>Revenue Operations</span>
           </div>
-          <h1 className="text-2xl font-extrabold text-white tracking-tight">
+          <h1 className="text-2xl font-bold tracking-tight text-slate-900">
             Financial Health & Recurring Revenue
           </h1>
-          <p className="text-xs text-slate-400 mt-1 max-w-xl">
-            Unified single-pane view of active recurring subscriptions, total collected revenue,
-            outstanding balances, and overdue invoices.
+          <p className="text-sm text-slate-500">
+            Real-time subscription billing telemetry, collections, and receivables.
           </p>
         </div>
 
-        {/* Scene 4 & 7 Quick Action */}
-        <div className="flex items-center gap-3">
-          <div className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 bg-emerald-950/60 text-emerald-400 border border-emerald-800/60 rounded-xl text-xs font-semibold">
-            <Clock className="w-3.5 h-3.5" />
-            <span>Response: &lt; 8ms (&lt; 2.0s goal)</span>
+        <div className="flex flex-wrap items-center gap-3">
+          <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-emerald-50 border border-emerald-200 text-emerald-700 text-xs font-medium">
+            <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+            <span>Response: &lt; 50ms</span>
           </div>
+
           <button
             onClick={() => runBillingDay()}
-            className="flex items-center gap-2 px-4 py-2.5 bg-purple-600 hover:bg-purple-700 text-white rounded-xl text-xs font-bold transition shadow-sm hover:shadow"
+            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl font-semibold text-sm text-white bg-indigo-600 hover:bg-indigo-700 shadow-sm hover:shadow transition-all cursor-pointer active:scale-95"
           >
             <Zap className="w-4 h-4" />
-            <span>Run Billing Day (1-Click)</span>
+            <span>Run Billing Day</span>
           </button>
         </div>
       </div>
 
-      {/* KPI Cards Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      {/* 2. Bento KPI Grid */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
         {/* Card 1: Active Subscriptions */}
-        <div className="bg-slate-900 p-5 rounded-2xl border border-slate-800 shadow-lg hover:border-purple-500/50 transition">
+        <div className="revops-card-hover rounded-2xl p-5 space-y-3">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">
-              Active Subscriptions
+            <span className="text-xs font-semibold uppercase tracking-wider text-slate-500">
+              Active Contracts
             </span>
-            <div className="p-2 bg-purple-950/60 border border-purple-800/60 text-purple-400 rounded-xl">
-              <Repeat className="w-4 h-4" />
+            <div className="w-8 h-8 rounded-lg bg-indigo-50 text-indigo-600 flex items-center justify-center">
+              <Users className="w-4 h-4" />
             </div>
           </div>
-          <div className="mt-3 flex items-baseline gap-2">
-            <span className="text-3xl font-extrabold text-white">{activeSubsCount}</span>
-            <span className="text-xs font-semibold text-emerald-400 flex items-center">
-              <ArrowUpRight className="w-3.5 h-3.5" />
-              100% On Book
+          <div className="flex items-baseline gap-2">
+            <span className="text-3xl font-bold text-slate-900 tabular-nums">
+              {activeSubs.length}
+            </span>
+            <span className="text-xs text-slate-500">
+              of {subscriptions.length} total
             </span>
           </div>
-          <p className="text-[11px] text-slate-400 mt-1">
-            Total registered: {subscriptions.length} accounts
+          <p className="text-xs text-slate-500">
+            Generating recurring monthly billing
           </p>
         </div>
 
-        {/* Card 2: Monthly Recurring Revenue (MRR) */}
-        <div className="bg-slate-900 p-5 rounded-2xl border border-slate-800 shadow-lg hover:border-purple-500/50 transition">
+        {/* Card 2: MRR */}
+        <div className="revops-card-hover rounded-2xl p-5 space-y-3">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">
+            <span className="text-xs font-semibold uppercase tracking-wider text-slate-500">
               Monthly Recurring (MRR)
             </span>
-            <div className="p-2 bg-emerald-950/60 border border-emerald-800/60 text-emerald-400 rounded-xl">
+            <div className="w-8 h-8 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center">
               <TrendingUp className="w-4 h-4" />
             </div>
           </div>
-          <div className="mt-3 flex items-baseline gap-2">
-            <span className="text-3xl font-extrabold text-white">
-              ${totalMRR.toLocaleString()}
+          <div className="flex items-baseline gap-1.5">
+            <span className="text-3xl font-bold text-slate-900 tabular-nums">
+              ${mrr.toLocaleString()}
             </span>
-            <span className="text-xs text-slate-400">/mo</span>
+            <span className="text-xs text-slate-500">/mo</span>
           </div>
-          <p className="text-[11px] text-slate-400 mt-1">
-            Projected ARR: <strong className="text-slate-200">${totalARR.toLocaleString()}</strong>
+          <p className="text-xs text-slate-500">
+            Projected ARR: <strong className="text-emerald-700 font-semibold font-mono">${arr.toLocaleString()}</strong>
           </p>
         </div>
 
-        {/* Card 3: Total Collected Revenue */}
-        <div className="bg-slate-900 p-5 rounded-2xl border border-slate-800 shadow-lg hover:border-purple-500/50 transition">
+        {/* Card 3: Collected Revenue */}
+        <div className="revops-card-hover rounded-2xl p-5 space-y-3">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">
+            <span className="text-xs font-semibold uppercase tracking-wider text-slate-500">
               Revenue Collected
             </span>
-            <div className="p-2 bg-blue-950/60 border border-blue-800/60 text-blue-400 rounded-xl">
-              <CreditCard className="w-4 h-4" />
+            <div className="w-8 h-8 rounded-lg bg-sky-50 text-sky-600 flex items-center justify-center">
+              <DollarSign className="w-4 h-4" />
             </div>
           </div>
-          <div className="mt-3 flex items-baseline gap-2">
-            <span className="text-3xl font-extrabold text-white">
-              ${totalCollectedRevenue.toLocaleString()}
+          <div className="flex items-baseline gap-2">
+            <span className="text-3xl font-bold text-slate-900 tabular-nums">
+              ${collectedRevenue.toLocaleString()}
             </span>
-            <span className="text-xs font-semibold text-blue-400">
-              {payments.length} Payments
+            <span className="text-xs font-medium text-sky-700">
+              {payments.length} settled
             </span>
           </div>
-          <p className="text-[11px] text-slate-400 mt-1">
-            Settled via Stripe, CC & Wire
+          <p className="text-xs text-slate-500">
+            Payments settled across all channels
           </p>
         </div>
 
-        {/* Card 4: Still Owed / Overdue Alert */}
-        <div className="bg-slate-900 p-5 rounded-2xl border border-slate-800 shadow-lg hover:border-purple-500/50 transition">
+        {/* Card 4: Outstanding Dues */}
+        <div className="revops-card-hover rounded-2xl p-5 space-y-3 border-rose-200">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">
-              Outstanding Owed
+            <span className="text-xs font-semibold uppercase tracking-wider text-slate-500">
+              Outstanding Dues
             </span>
-            <div className="p-2 bg-rose-950/60 border border-rose-800/60 text-rose-400 rounded-xl">
-              <AlertOctagon className="w-4 h-4" />
+            <div className="w-8 h-8 rounded-lg bg-rose-50 text-rose-600 flex items-center justify-center">
+              <Clock className="w-4 h-4" />
             </div>
           </div>
-          <div className="mt-3 flex items-baseline gap-2">
-            <span className="text-3xl font-extrabold text-rose-400">
-              ${totalOutstandingOwed.toLocaleString()}
+          <div className="flex items-baseline gap-2">
+            <span className="text-3xl font-bold text-rose-600 tabular-nums">
+              ${outstandingBalance.toLocaleString()}
             </span>
-            {overdueInvoices.length > 0 && (
-              <span className="text-xs font-bold px-1.5 py-0.5 rounded-full bg-rose-950 text-rose-300 border border-rose-800/60">
-                {overdueInvoices.length} Overdue
-              </span>
-            )}
+            <span className="text-xs px-2 py-0.5 rounded-full bg-rose-50 text-rose-700 border border-rose-200 font-medium">
+              {overdueInvoices.length} Overdue
+            </span>
           </div>
-          <p className="text-[11px] text-slate-400 mt-1">
-            Action required by accounts receivable
+          <p className="text-xs text-slate-500">
+            Overdue Risk: <strong className="text-rose-700 font-mono">${overdueBalance.toLocaleString()}</strong>
           </p>
         </div>
       </div>
 
-      {/* Overdue Invoices Alert Section (Scene 6) */}
+      {/* 3. Overdue Alert Strip */}
       {overdueInvoices.length > 0 && (
-        <div className="bg-gradient-to-r from-rose-950/40 to-amber-950/30 p-5 rounded-2xl border border-rose-900/60 shadow-lg space-y-3">
+        <div className="rounded-2xl bg-rose-50 border border-rose-200 p-5 space-y-3">
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2 text-rose-300 font-bold text-sm">
-              <AlertOctagon className="w-4.5 h-4.5 text-rose-400" />
-              <span>Attention: {overdueInvoices.length} Overdue Invoices Awaiting Payment</span>
+            <div className="flex items-center gap-2 text-rose-800 font-semibold text-sm">
+              <AlertTriangle className="w-4 h-4 text-rose-600" />
+              <span>
+                Attention: {overdueInvoices.length} Overdue Invoice{overdueInvoices.length > 1 ? 's' : ''} Awaiting Settlement
+              </span>
             </div>
-            <button
-              onClick={() => onNavigate('invoices')}
-              className="text-xs font-bold text-rose-400 hover:text-rose-300 underline"
-            >
-              View Invoices Table &rarr;
-            </button>
+            {onNavigate && (
+              <button
+                onClick={() => onNavigate('invoices')}
+                className="text-xs font-semibold text-rose-700 hover:text-rose-900 inline-flex items-center gap-1 cursor-pointer"
+              >
+                <span>View Invoices</span>
+                <ArrowUpRight className="w-3.5 h-3.5" />
+              </button>
+            )}
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3">
             {overdueInvoices.map((inv) => (
               <div
                 key={inv.id}
-                className="bg-slate-900/90 p-3.5 rounded-xl border border-rose-900/60 flex items-center justify-between shadow-md"
+                className="flex items-center justify-between p-3.5 rounded-xl bg-white border border-rose-200 shadow-2xs"
               >
-                <div>
+                <div className="space-y-0.5">
                   <div className="flex items-center gap-2">
-                    <span className="font-bold text-xs text-white">{inv.number}</span>
-                    <span className="text-[10px] bg-rose-950 text-rose-300 font-bold px-1.5 py-0.2 rounded border border-rose-800/60">
-                      Due: {inv.dueDate}
+                    <span className="font-mono text-xs font-bold text-slate-900">{inv.invoice_number || inv.number}</span>
+                    <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-rose-100 text-rose-700">
+                      Due {inv.due_date || inv.dueDate}
                     </span>
                   </div>
-                  <div className="text-xs text-slate-300 font-medium mt-0.5">{inv.customerName}</div>
-                  <div className="text-xs font-bold text-rose-400 mt-0.5">
-                    Amount Owed: ${(inv.total - inv.amountPaid).toLocaleString()}
-                  </div>
+                  <p className="text-xs text-slate-600">{inv.customer_name || inv.customerName}</p>
+                  <p className="text-xs text-rose-600 font-bold font-mono">
+                    ${(Number(inv.total || 0) - Number(inv.amount_paid || 0)).toFixed(2)}
+                  </p>
                 </div>
 
                 <button
-                  onClick={() => handleChasePayment(inv.number, inv.customerEmail)}
-                  className="px-3 py-1.5 bg-rose-950/60 hover:bg-rose-900 text-rose-300 text-xs font-bold rounded-xl transition flex items-center gap-1.5 border border-rose-800/60 shrink-0"
+                  onClick={() => addToast(`Reminder dispatched for ${inv.invoice_number || inv.number}`, 'info')}
+                  className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-semibold bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 transition-colors cursor-pointer"
                 >
-                  <Send className="w-3.5 h-3.5" />
-                  <span>Chase Payment</span>
+                  <Send className="w-3 h-3" />
+                  <span>Chase</span>
                 </button>
               </div>
             ))}
@@ -247,101 +227,93 @@ export const Dashboard: React.FC<DashboardProps> = ({ onNavigate }) => {
         </div>
       )}
 
-      {/* Active Subscriptions Summary & Search Filters */}
-      <div className="bg-slate-900 rounded-2xl border border-slate-800 shadow-xl overflow-hidden">
-        <div className="p-5 border-b border-slate-800 flex flex-col md:flex-row md:items-center justify-between gap-4">
+      {/* 4. Portfolio Table */}
+      <div className="revops-card rounded-2xl overflow-hidden bg-white border border-slate-200">
+        <div className="p-5 border-b border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
-            <h3 className="font-bold text-base text-white">Subscription Portfolio Summary</h3>
-            <p className="text-xs text-slate-400">
-              Live recurring contracts, billing cycles, and next auto-invoicing dates
-            </p>
+            <h2 className="text-base font-bold text-slate-900">Subscription Portfolio Summary</h2>
+            <p className="text-xs text-slate-500">Live active contracts, schedules, and renewal checkpoints</p>
           </div>
 
-          {/* Quick Filters */}
-          <div className="flex flex-wrap items-center gap-2.5">
+          <div className="flex flex-wrap items-center gap-3">
             <div className="relative">
-              <Search className="w-4 h-4 text-slate-400 absolute left-3 top-2.5" />
+              <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
               <input
                 type="text"
-                placeholder="Search customer or ID..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-9 pr-3 py-1.5 text-xs rounded-xl border border-slate-700 bg-slate-950 text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="Search contract or customer..."
+                className="pl-9 pr-4 py-1.5 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-800 placeholder:text-slate-400 focus:outline-none focus:border-indigo-500 w-56 transition-colors"
               />
             </div>
 
             <select
-              value={selectedPlan}
-              onChange={(e) => setSelectedPlan(e.target.value)}
-              className="text-xs rounded-xl border border-slate-700 px-3 py-1.5 bg-slate-950 text-slate-200 focus:outline-none focus:ring-2 focus:ring-purple-500"
+              value={statusFilter}
+              onChange={(e) => setStatusFilter(e.target.value)}
+              className="px-3 py-1.5 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-700 focus:outline-none focus:border-indigo-500 transition-colors"
             >
-              <option value="all">All Plans</option>
-              {plans.map((p) => (
-                <option key={p.id} value={p.id}>
-                  {p.name}
-                </option>
-              ))}
+              <option value="ALL">All Statuses</option>
+              <option value="active">Active</option>
+              <option value="paused">Paused</option>
+              <option value="draft">Draft</option>
+              <option value="cancelled">Cancelled</option>
             </select>
 
-            <button
-              onClick={() => onNavigate('subscriptions')}
-              className="px-3 py-1.5 bg-purple-950/60 border border-purple-800/60 text-purple-300 hover:bg-purple-900/60 text-xs font-semibold rounded-xl transition"
-            >
-              View Full Table &rarr;
-            </button>
+            {onNavigate && (
+              <button
+                onClick={() => onNavigate('quotes')}
+                className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-semibold bg-indigo-600 hover:bg-indigo-700 text-white shadow-2xs transition-colors cursor-pointer"
+              >
+                <Plus className="w-3.5 h-3.5" />
+                <span>New Quote</span>
+              </button>
+            )}
           </div>
         </div>
 
-        {/* Subscriptions Table */}
         <div className="overflow-x-auto">
-          <table className="w-full text-left text-xs">
-            <thead className="bg-slate-950/60 text-slate-400 uppercase tracking-wider font-semibold border-b border-slate-800">
-              <tr>
-                <th className="px-5 py-3.5">Subscription</th>
-                <th className="px-5 py-3.5">Customer</th>
-                <th className="px-5 py-3.5">Plan</th>
-                <th className="px-5 py-3.5">Status</th>
-                <th className="px-5 py-3.5">Next Billing</th>
-                <th className="px-5 py-3.5 text-right pr-8">Recurring Amount</th>
+          <table className="w-full text-left border-collapse">
+            <thead>
+              <tr className="border-b border-slate-200 bg-slate-50 text-[11px] font-bold uppercase tracking-wider text-slate-500">
+                <th className="py-3 px-6">Subscription</th>
+                <th className="py-3 px-6">Customer</th>
+                <th className="py-3 px-6">Status</th>
+                <th className="py-3 px-6">Next Billing</th>
+                <th className="py-3 px-6 text-right">Recurring Amount</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-800">
-              {filteredSubscriptions.map((sub) => {
-                const statusStyles: Record<string, string> = {
-                  Active: 'bg-emerald-950 text-emerald-300 border border-emerald-800/60',
-                  Draft: 'bg-slate-800 text-slate-300 border border-slate-700',
-                  Quotation: 'bg-indigo-950 text-indigo-300 border border-indigo-800/60',
-                  Confirmed: 'bg-blue-950 text-blue-300 border border-blue-800/60',
-                  Paused: 'bg-amber-950 text-amber-300 border border-amber-800/60',
-                  Closed: 'bg-rose-950 text-rose-300 border border-rose-800/60',
-                };
-
-                return (
-                  <tr key={sub.id} className="hover:bg-slate-800/50 transition">
-                    <td className="px-5 py-4 font-bold text-white">{sub.number}</td>
-                    <td className="px-5 py-4">
-                      <div className="font-semibold text-slate-200">{sub.customerName}</div>
-                      <div className="text-[11px] text-slate-400">{sub.customerEmail}</div>
+            <tbody className="divide-y divide-slate-100 text-sm">
+              {filteredSubs.length === 0 ? (
+                <tr>
+                  <td colSpan={5} className="py-8 text-center text-xs text-slate-400">
+                    No subscriptions found. Create your first quote or subscription to see it here!
+                  </td>
+                </tr>
+              ) : (
+                filteredSubs.map((sub) => (
+                  <tr key={sub.id} className="hover:bg-slate-50/70 transition-colors">
+                    <td className="py-3.5 px-6 font-mono font-semibold text-indigo-600 text-xs">
+                      {sub.subscription_number || sub.number}
                     </td>
-                    <td className="px-5 py-4 text-slate-300 font-medium">{sub.planName}</td>
-                    <td className="px-5 py-4">
-                      <span
-                        className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${
-                          statusStyles[sub.status] || 'bg-slate-800 text-slate-300'
-                        }`}
-                      >
+                    <td className="py-3.5 px-6">
+                      <div className="font-medium text-slate-900 text-xs">
+                        {sub.customer_name || sub.customerName || `Customer #${sub.customer_id}`}
+                      </div>
+                    </td>
+                    <td className="py-3.5 px-6">
+                      <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-medium border capitalize ${getStatusBadge(sub.status)}`}>
                         {sub.status}
                       </span>
                     </td>
-                    <td className="px-5 py-4 text-slate-400 font-mono text-[11px]">
-                      {sub.nextBillingDate}
+                    <td className="py-3.5 px-6 font-mono text-xs text-slate-600">
+                      {sub.next_billing_date || sub.nextBillingDate || '—'}
                     </td>
-                    <td className="px-5 py-4 font-bold text-white font-mono text-right pr-8">
-                      ${sub.totalAmount.toLocaleString()}
+                    <td className="py-3.5 px-6 text-right font-mono font-bold text-slate-900 tabular-nums text-xs">
+                      ${Number(sub.unit_price || sub.totalAmount || 0).toFixed(2)}
                     </td>
                   </tr>
-                );
-              })}
+                ))
+              )}
             </tbody>
           </table>
         </div>

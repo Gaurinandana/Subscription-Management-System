@@ -2,43 +2,69 @@
 
 @layer base {
   body {
-    font-family: 'Plus Jakarta Sans', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-  }
-  
-  code, pre {
-    font-family: 'JetBrains Mono', monospace;
+    background-color: #F8FAFC;
+    background-image: 
+      radial-gradient(at 10% 0%, rgba(99, 102, 241, 0.05) 0px, transparent 40%),
+      radial-gradient(at 90% 10%, rgba(14, 165, 233, 0.05) 0px, transparent 40%);
+    background-attachment: fixed;
+    color: #0F172A;
+    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+    overflow-x: hidden;
   }
 }
 
-/* Custom scrollbars for clean UI */
+/* Custom sleek light scrollbars */
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;
 }
-
 ::-webkit-scrollbar-track {
-  background: transparent;
+  background: #F1F5F9;
 }
-
 ::-webkit-scrollbar-thumb {
-  background: #334155;
+  background: #CBD5E1;
   border-radius: 9999px;
 }
-
 ::-webkit-scrollbar-thumb:hover {
-  background: #475569;
+  background: #94A3B8;
 }
 
-/* Print styles for invoices */
-@media print {
-  .no-print {
-    display: none !important;
+/* Premium Light Mode Card Surfaces */
+.revops-card {
+  background: #FFFFFF;
+  border: 1px solid #E2E8F0;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.04), 0 1px 2px -1px rgba(0, 0, 0, 0.04);
+}
+
+.revops-card-hover {
+  background: #FFFFFF;
+  border: 1px solid #E2E8F0;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.04), 0 1px 2px -1px rgba(0, 0, 0, 0.04);
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.revops-card-hover:hover {
+  transform: translateY(-2px);
+  border-color: #C7D2FE;
+  box-shadow: 0 12px 24px -6px rgba(79, 70, 229, 0.08), 0 4px 8px -2px rgba(0, 0, 0, 0.03);
+}
+
+/* Tabular currency & number alignment */
+.tabular-nums {
+  font-variant-numeric: tabular-nums;
+}
+
+/* Smooth Entrance Keyframe Animation */
+@keyframes fadeInSlideUp {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
   }
-  .print-only {
-    display: block !important;
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
-  body {
-    background: white !important;
-    color: black !important;
-  }
+}
+
+.animate-entrance {
+  animation: fadeInSlideUp 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }

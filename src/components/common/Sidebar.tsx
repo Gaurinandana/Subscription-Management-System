@@ -1,168 +1,83 @@
 import React from 'react';
-import { useApp } from '../../context/AppContext';
-import {
-  LayoutDashboard,
-  Repeat,
-  FileSpreadsheet,
-  Receipt,
-  Package,
-  Percent,
-  Users,
-  Compass,
-  Sparkles,
-  ExternalLink,
+import { 
+  BarChart3, Repeat, FileSpreadsheet, Receipt, 
+  Package, Percent, Users, UserCheck, Sparkles, ShieldCheck 
 } from 'lucide-react';
+import { useApp } from '../../context/AppContext';
 
 interface SidebarProps {
-  currentTab: string;
-  onSelectTab: (tab: string) => void;
-  onOpenVerificationGuide: () => void;
+  activeTab: string;
+  setActiveTab: (tab: string) => void;
 }
 
-export const Sidebar: React.FC<SidebarProps> = ({
-  currentTab,
-  onSelectTab,
-  onOpenVerificationGuide,
-}) => {
+export const Sidebar: React.FC<SidebarProps> = ({ activeTab, setActiveTab }) => {
   const { currentUser } = useApp();
-  const isAdmin = currentUser.role === 'admin';
-  const isStaff = currentUser.role === 'staff';
-  const isCustomer = currentUser.role === 'customer';
 
-  // Navigation configurations
-  const internalNav = [
-    {
-      id: 'dashboard',
-      label: 'Finance Lead Metrics',
-      icon: <LayoutDashboard className="w-4 h-4" />,
-      badge: 'Scene 7',
-    },
-    {
-      id: 'subscriptions',
-      label: 'Subscriptions Lifecycle',
-      icon: <Repeat className="w-4 h-4" />,
-      badge: 'Scene 3',
-    },
-    {
-      id: 'quotes',
-      label: 'Quote Builder',
-      icon: <FileSpreadsheet className="w-4 h-4" />,
-      badge: 'Scene 3',
-    },
-    {
-      id: 'invoices',
-      label: 'Billing Day & Invoices',
-      icon: <Receipt className="w-4 h-4" />,
-      badge: 'Scene 4 & 6',
-    },
-    {
-      id: 'products',
-      label: 'Products, Plans & Variants',
-      icon: <Package className="w-4 h-4" />,
-      badge: 'Scene 2',
-    },
-    ...(isAdmin
-      ? [
-          {
-            id: 'discounts',
-            label: 'Discounts & Taxes',
-            icon: <Percent className="w-4 h-4" />,
-            badge: 'Scene 4 & 5',
-          },
-          {
-            id: 'staff',
-            label: 'Staff Management',
-            icon: <Users className="w-4 h-4" />,
-            badge: 'Scene 1',
-          },
-        ]
-      : []),
-    {
-      id: 'portal',
-      label: 'Customer Portal (Preview)',
-      icon: <Compass className="w-4 h-4" />,
-      badge: 'Scene 1',
-    },
+  const navItems = [
+    { id: 'dashboard', label: 'Financial Overview', icon: BarChart3, roles: ['admin', 'staff'] },
+    { id: 'subscriptions', label: 'Subscriptions', icon: Repeat, roles: ['admin', 'staff'] },
+    { id: 'quotes', label: 'Quote Builder', icon: FileSpreadsheet, roles: ['admin', 'staff'] },
+    { id: 'invoices', label: 'Billing & Invoices', icon: Receipt, roles: ['admin', 'staff'] },
+    { id: 'products', label: 'Products & Plans', icon: Package, roles: ['admin', 'staff'] },
+    { id: 'discounts', label: 'Discounts & Taxes', icon: Percent, roles: ['admin'] },
+    { id: 'staff', label: 'Staff Directory', icon: Users, roles: ['admin'] },
+    { id: 'portal', label: 'Customer Portal', icon: UserCheck, roles: ['admin', 'staff', 'customer'] },
   ];
 
-  const customerNav = [
-    {
-      id: 'portal',
-      label: 'My Subscriptions & Invoices',
-      icon: <Compass className="w-4 h-4" />,
-      badge: 'Self-Service',
-    },
-  ];
-
-  const navItems = isCustomer ? customerNav : internalNav;
+  const visibleItems = navItems.filter(item => item.roles.includes(currentUser?.role || 'admin'));
 
   return (
-    <aside className="w-64 border-r border-slate-800 bg-slate-900/60 backdrop-blur-md flex flex-col shrink-0 min-h-[calc(100vh-61px)]">
-      <div className="p-4 flex-1 space-y-6">
-        <div>
-          <div className="px-3 mb-2 text-[10px] font-extrabold uppercase tracking-wider text-slate-500">
-            {isCustomer ? 'Customer Access' : 'Business Operations'}
-          </div>
-
-          <nav className="space-y-1">
-            {navItems.map((item) => {
-              const active = currentTab === item.id;
-              return (
-                <button
-                  key={item.id}
-                  onClick={() => onSelectTab(item.id)}
-                  className={`w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-semibold transition ${
-                    active
-                      ? 'bg-purple-600 text-white shadow-sm shadow-purple-600/30 font-bold'
-                      : 'text-slate-400 hover:text-white hover:bg-slate-800/80'
-                  }`}
-                >
-                  <div className="flex items-center gap-3">
-                    <span className={active ? 'text-white' : 'text-slate-400'}>{item.icon}</span>
-                    <span>{item.label}</span>
-                  </div>
-                  {item.badge && (
-                    <span
-                      className={`text-[9px] font-bold px-1.5 py-0.5 rounded-full ${
-                        active
-                          ? 'bg-purple-500 text-purple-100'
-                          : 'bg-slate-800 text-slate-400 border border-slate-700/80'
-                      }`}
-                    >
-                      {item.badge}
-                    </span>
-                  )}
-                </button>
-              );
-            })}
-          </nav>
-        </div>
-
-        {/* Quick RBAC indicator card */}
-        <div className="p-3.5 bg-gradient-to-br from-purple-950/40 to-indigo-950/40 rounded-2xl border border-purple-800/50 space-y-2">
-          <div className="flex items-center gap-2 text-xs font-bold text-purple-300">
-            <Sparkles className="w-4 h-4 text-purple-400" />
-            <span>Brightloop Software</span>
-          </div>
-          <p className="text-[11px] text-purple-200/80 leading-relaxed">
-            You are logged in as{' '}
-            <strong className="text-white uppercase">{currentUser.role}</strong>.
-            {currentUser.role === 'admin' && ' You have full permissions over plans, rules, and staff.'}
-            {currentUser.role === 'staff' && ' You can manage quotes, run billing day, and register payments.'}
-            {currentUser.role === 'customer' && ' You can self-service manage your subscriptions and invoices.'}
+    <aside className="w-64 shrink-0 border-r border-slate-200 bg-white flex flex-col justify-between p-4 select-none">
+      <div className="space-y-5">
+        <div className="px-3 pt-1">
+          <p className="text-[11px] font-bold uppercase tracking-wider text-slate-400">
+            Operations
           </p>
-          <button
-            onClick={onOpenVerificationGuide}
-            className="w-full mt-1 py-1.5 bg-slate-800 hover:bg-slate-700 border border-slate-700 rounded-xl text-[11px] font-bold text-purple-300 transition flex items-center justify-center gap-1 shadow-2xs"
-          >
-            <span>Open PDF Checklist</span>
-            <ExternalLink className="w-3 h-3" />
-          </button>
         </div>
+
+        <nav className="space-y-1">
+          {visibleItems.map((item) => {
+            const Icon = item.icon;
+            const isActive = activeTab === item.id;
+            return (
+              <button
+                key={item.id}
+                onClick={() => setActiveTab(item.id)}
+                className={`w-full group flex items-center justify-between px-3.5 py-2.5 rounded-xl text-sm font-medium transition-all duration-150 cursor-pointer ${
+                  isActive
+                    ? 'bg-indigo-50 text-indigo-700 font-semibold shadow-xs'
+                    : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'
+                }`}
+              >
+                <div className="flex items-center gap-3">
+                  <Icon className={`w-4 h-4 transition-transform group-hover:scale-110 duration-150 ${
+                    isActive ? 'text-indigo-600' : 'text-slate-400 group-hover:text-slate-600'
+                  }`} />
+                  <span>{item.label}</span>
+                </div>
+                {isActive && (
+                  <span className="w-1.5 h-1.5 rounded-full bg-indigo-600 shadow-sm" />
+                )}
+              </button>
+            );
+          })}
+        </nav>
       </div>
 
-      <div className="p-4 border-t border-slate-800 text-center text-[11px] text-slate-500">
-        Brightloop v1.0 • Odoo Challenge
+      {/* Clean User Status Card (No Scene jargon) */}
+      <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-200/80 space-y-2">
+        <div className="flex items-center justify-between">
+          <span className="text-xs font-semibold text-slate-800 flex items-center gap-1.5">
+            <ShieldCheck className="w-3.5 h-3.5 text-indigo-600" />
+            <span>Active Session</span>
+          </span>
+          <span className="text-[10px] font-bold tracking-wide uppercase px-2 py-0.5 rounded-full bg-indigo-100 text-indigo-700">
+            {currentUser?.role || 'Admin'}
+          </span>
+        </div>
+        <p className="text-xs text-slate-500 truncate">
+          {currentUser?.email || 'admin@brightloop.io'}
+        </p>
       </div>
     </aside>
   );
