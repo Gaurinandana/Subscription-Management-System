@@ -112,18 +112,18 @@ export const ProductsPlans: React.FC = () => {
   };
 
   return (
-    <div className="space-y-6 animate-in fade-in duration-300">
+    <div className="space-y-6 animate-in fade-in duration-300 text-slate-100">
       {/* Header */}
-      <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-2xs flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div className="bg-slate-900 p-6 rounded-2xl border border-slate-800 shadow-xl flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <div className="flex items-center gap-2 text-xs font-bold text-purple-700 uppercase tracking-wider mb-1">
+          <div className="flex items-center gap-2 text-xs font-bold text-purple-400 uppercase tracking-wider mb-1">
             <Sparkles className="w-4 h-4" />
             <span>Scene 2: Launching a New Plan & Products</span>
           </div>
-          <h1 className="text-2xl font-extrabold text-slate-900 tracking-tight">
+          <h1 className="text-2xl font-extrabold text-white tracking-tight">
             Products, Variants & Plans Catalog
           </h1>
-          <p className="text-xs text-slate-500 mt-1 max-w-xl">
+          <p className="text-xs text-slate-400 mt-1 max-w-xl">
             Configure subscription offerings with brand variants (e.g. Odoo brand adds +$560),
             billing frequencies (daily, weekly, monthly, yearly), and lifecycle closure rules.
           </p>
@@ -151,21 +151,21 @@ export const ProductsPlans: React.FC = () => {
             )}
           </div>
         ) : (
-          <div className="flex items-center gap-2 px-3 py-1.5 bg-amber-50 text-amber-800 border border-amber-200 rounded-xl text-xs font-semibold">
-            <ShieldAlert className="w-4 h-4 text-amber-600 shrink-0" />
+          <div className="flex items-center gap-2 px-3 py-1.5 bg-amber-950/60 text-amber-300 border border-amber-800/60 rounded-xl text-xs font-semibold">
+            <ShieldAlert className="w-4 h-4 text-amber-400 shrink-0" />
             <span>Read-Only (Admin Access Required to Launch)</span>
           </div>
         )}
       </div>
 
       {/* Tabs */}
-      <div className="flex border-b border-slate-200 bg-white rounded-2xl p-2 gap-2 border shadow-2xs">
+      <div className="flex border-b border-slate-800 bg-slate-900 rounded-2xl p-2 gap-2 border shadow-xl">
         <button
           onClick={() => setActiveTab('products')}
           className={`flex-1 py-2 text-xs font-bold rounded-xl transition flex items-center justify-center gap-2 ${
             activeTab === 'products'
               ? 'bg-purple-600 text-white shadow-xs'
-              : 'text-slate-600 hover:bg-slate-50'
+              : 'text-slate-400 hover:bg-slate-800 hover:text-white'
           }`}
         >
           <Package className="w-4 h-4" />
@@ -176,7 +176,7 @@ export const ProductsPlans: React.FC = () => {
           className={`flex-1 py-2 text-xs font-bold rounded-xl transition flex items-center justify-center gap-2 ${
             activeTab === 'plans'
               ? 'bg-purple-600 text-white shadow-xs'
-              : 'text-slate-600 hover:bg-slate-50'
+              : 'text-slate-400 hover:bg-slate-800 hover:text-white'
           }`}
         >
           <Layers className="w-4 h-4" />
@@ -190,40 +190,40 @@ export const ProductsPlans: React.FC = () => {
           {products.map((prod) => (
             <div
               key={prod.id}
-              className="bg-white p-5 rounded-2xl border border-slate-200 shadow-2xs hover:border-purple-200 transition space-y-4 flex flex-col justify-between"
+              className="bg-slate-900 p-5 rounded-2xl border border-slate-800 shadow-xl hover:border-purple-500/50 transition space-y-4 flex flex-col justify-between"
             >
               <div>
                 <div className="flex items-start justify-between gap-2">
                   <div>
-                    <span className="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-full bg-purple-50 text-purple-700">
+                    <span className="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-full bg-purple-950/80 text-purple-300 border border-purple-800/60">
                       {prod.type}
                     </span>
-                    <h3 className="font-extrabold text-slate-900 text-base mt-1.5">{prod.name}</h3>
+                    <h3 className="font-extrabold text-white text-base mt-1.5">{prod.name}</h3>
                   </div>
                   <div className="text-right">
-                    <span className="text-lg font-black text-slate-900 font-mono">
+                    <span className="text-lg font-black text-white font-mono">
                       ${prod.salesPrice}
                     </span>
                     <span className="text-[10px] text-slate-400 block">Base Price</span>
                   </div>
                 </div>
 
-                <p className="text-xs text-slate-500 mt-2 leading-relaxed">{prod.notes}</p>
+                <p className="text-xs text-slate-400 mt-2 leading-relaxed">{prod.notes}</p>
 
                 {/* Variants List (Scene 2) */}
-                <div className="mt-4 pt-3 border-t border-slate-100 space-y-1.5">
-                  <div className="text-[11px] font-bold text-slate-600 flex items-center gap-1.5">
-                    <Tag className="w-3.5 h-3.5 text-purple-600" />
+                <div className="mt-4 pt-3 border-t border-slate-800 space-y-1.5">
+                  <div className="text-[11px] font-bold text-slate-300 flex items-center gap-1.5">
+                    <Tag className="w-3.5 h-3.5 text-purple-400" />
                     <span>Brand & Feature Variants:</span>
                   </div>
                   <div className="space-y-1">
                     {prod.variants.map((v) => (
                       <div
                         key={v.id}
-                        className="flex items-center justify-between p-2 rounded-xl bg-slate-50 border border-slate-100 text-xs"
+                        className="flex items-center justify-between p-2 rounded-xl bg-slate-950/60 border border-slate-800 text-xs"
                       >
-                        <span className="font-medium text-slate-800">{v.brand}</span>
-                        <span className="font-mono font-bold text-purple-700">
+                        <span className="font-medium text-slate-200">{v.brand}</span>
+                        <span className="font-mono font-bold text-purple-400">
                           {v.extraPrice > 0 ? `+$${v.extraPrice}` : 'Included ($0)'}
                         </span>
                       </div>
@@ -232,9 +232,9 @@ export const ProductsPlans: React.FC = () => {
                 </div>
               </div>
 
-              <div className="pt-3 border-t border-slate-100 flex items-center justify-between text-[11px] text-slate-400">
+              <div className="pt-3 border-t border-slate-800 flex items-center justify-between text-[11px] text-slate-400">
                 <span>Cost Price: ${prod.costPrice}</span>
-                <span className="text-emerald-600 font-semibold">
+                <span className="text-emerald-400 font-semibold">
                   Margin: ${(prod.salesPrice - prod.costPrice)}/unit
                 </span>
               </div>
@@ -249,74 +249,74 @@ export const ProductsPlans: React.FC = () => {
           {plans.map((plan) => (
             <div
               key={plan.id}
-              className="bg-white p-5 rounded-2xl border border-slate-200 shadow-2xs hover:border-purple-200 transition space-y-4 flex flex-col justify-between"
+              className="bg-slate-900 p-5 rounded-2xl border border-slate-800 shadow-xl hover:border-purple-500/50 transition space-y-4 flex flex-col justify-between"
             >
               <div>
                 <div className="flex items-start justify-between gap-2">
                   <div>
-                    <span className="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-full bg-blue-50 text-blue-700">
+                    <span className="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-full bg-blue-950/80 text-blue-300 border border-blue-800/60">
                       {plan.billingFrequency} billing
                     </span>
-                    <h3 className="font-extrabold text-slate-900 text-base mt-1.5">{plan.name}</h3>
+                    <h3 className="font-extrabold text-white text-base mt-1.5">{plan.name}</h3>
                   </div>
                   <div className="text-right">
-                    <span className="text-xl font-black text-slate-900 font-mono">
+                    <span className="text-xl font-black text-white font-mono">
                       ${plan.cost.toLocaleString()}
                     </span>
                     <span className="text-[10px] text-slate-400 block">/{plan.billingFrequency}</span>
                   </div>
                 </div>
 
-                <p className="text-xs text-slate-500 mt-2 leading-relaxed">
+                <p className="text-xs text-slate-400 mt-2 leading-relaxed">
                   {plan.description || 'Configured recurring plan with rules enforced plan-by-plan.'}
                 </p>
 
                 {/* Plan Lifecycle Safeguards (Scene 2) */}
-                <div className="mt-4 pt-3 border-t border-slate-100 space-y-2">
-                  <div className="text-[11px] font-bold text-slate-600">
+                <div className="mt-4 pt-3 border-t border-slate-800 space-y-2">
+                  <div className="text-[11px] font-bold text-slate-300">
                     Plan Lifecycle Rules (Admin Configured):
                   </div>
                   <div className="grid grid-cols-2 gap-2 text-xs">
-                    <div className="flex items-center gap-1.5 p-2 bg-slate-50 rounded-xl">
+                    <div className="flex items-center gap-1.5 p-2 bg-slate-950/60 rounded-xl border border-slate-800">
                       {plan.autoCloseOnEnd ? (
-                        <CheckCircle2 className="w-3.5 h-3.5 text-purple-600 shrink-0" />
+                        <CheckCircle2 className="w-3.5 h-3.5 text-purple-400 shrink-0" />
                       ) : (
-                        <XCircle className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+                        <XCircle className="w-3.5 h-3.5 text-slate-600 shrink-0" />
                       )}
-                      <span className="text-slate-700 text-[11px]">Auto-Close on End</span>
+                      <span className="text-slate-300 text-[11px]">Auto-Close on End</span>
                     </div>
 
-                    <div className="flex items-center gap-1.5 p-2 bg-slate-50 rounded-xl">
+                    <div className="flex items-center gap-1.5 p-2 bg-slate-950/60 rounded-xl border border-slate-800">
                       {plan.canCloseEarly ? (
-                        <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
+                        <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
                       ) : (
-                        <XCircle className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+                        <XCircle className="w-3.5 h-3.5 text-slate-600 shrink-0" />
                       )}
-                      <span className="text-slate-700 text-[11px]">Can Close Early</span>
+                      <span className="text-slate-300 text-[11px]">Can Close Early</span>
                     </div>
 
-                    <div className="flex items-center gap-1.5 p-2 bg-slate-50 rounded-xl">
+                    <div className="flex items-center gap-1.5 p-2 bg-slate-950/60 rounded-xl border border-slate-800">
                       {plan.canPause ? (
-                        <CheckCircle2 className="w-3.5 h-3.5 text-amber-600 shrink-0" />
+                        <CheckCircle2 className="w-3.5 h-3.5 text-amber-400 shrink-0" />
                       ) : (
-                        <XCircle className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+                        <XCircle className="w-3.5 h-3.5 text-slate-600 shrink-0" />
                       )}
-                      <span className="text-slate-700 text-[11px]">Can Pause</span>
+                      <span className="text-slate-300 text-[11px]">Can Pause</span>
                     </div>
 
-                    <div className="flex items-center gap-1.5 p-2 bg-slate-50 rounded-xl">
+                    <div className="flex items-center gap-1.5 p-2 bg-slate-950/60 rounded-xl border border-slate-800">
                       {plan.canRenew ? (
-                        <CheckCircle2 className="w-3.5 h-3.5 text-blue-600 shrink-0" />
+                        <CheckCircle2 className="w-3.5 h-3.5 text-blue-400 shrink-0" />
                       ) : (
-                        <XCircle className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+                        <XCircle className="w-3.5 h-3.5 text-slate-600 shrink-0" />
                       )}
-                      <span className="text-slate-700 text-[11px]">Can Renew</span>
+                      <span className="text-slate-300 text-[11px]">Can Renew</span>
                     </div>
                   </div>
                 </div>
               </div>
 
-              <div className="pt-3 border-t border-slate-100 flex items-center justify-between text-[11px] text-slate-400">
+              <div className="pt-3 border-t border-slate-800 flex items-center justify-between text-[11px] text-slate-400">
                 <span>Min Qty: {plan.minQuantity} seat(s)</span>
                 <span>Active: {plan.startDate} &rarr; {plan.endDate}</span>
               </div>
@@ -327,13 +327,13 @@ export const ProductsPlans: React.FC = () => {
 
       {/* Add Product Modal (Admin only - Scene 2) */}
       {isAddProductOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs animate-in fade-in">
-          <div className="bg-white rounded-2xl shadow-2xl max-w-lg w-full border border-slate-200 overflow-hidden">
-            <div className="p-5 border-b border-slate-100 flex items-center justify-between bg-slate-50">
-              <h3 className="font-bold text-slate-900 text-sm">Launch New Product & Variants</h3>
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm animate-in fade-in">
+          <div className="bg-slate-900 rounded-2xl shadow-2xl max-w-lg w-full border border-slate-800 overflow-hidden text-slate-100">
+            <div className="p-5 border-b border-slate-800 flex items-center justify-between bg-slate-950/60">
+              <h3 className="font-bold text-white text-sm">Launch New Product & Variants</h3>
               <button
                 onClick={() => setIsAddProductOpen(false)}
-                className="p-1 text-slate-400 hover:text-slate-600 rounded-lg"
+                className="p-1 text-slate-400 hover:text-white rounded-lg"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -341,24 +341,24 @@ export const ProductsPlans: React.FC = () => {
 
             <form onSubmit={handleCreateProduct} className="p-6 space-y-4 max-h-[80vh] overflow-y-auto">
               <div>
-                <label className="block text-xs font-semibold text-slate-700 mb-1">Product Name</label>
+                <label className="block text-xs font-semibold text-slate-300 mb-1">Product Name</label>
                 <input
                   type="text"
                   required
                   placeholder="e.g. Brightloop Analytics Engine"
                   value={productName}
                   onChange={(e) => setProductName(e.target.value)}
-                  className="w-full text-xs rounded-xl border border-slate-200 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                  className="w-full text-xs rounded-xl border border-slate-700 bg-slate-950 text-white px-3 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500"
                 />
               </div>
 
               <div className="grid grid-cols-3 gap-3">
                 <div>
-                  <label className="block text-xs font-semibold text-slate-700 mb-1">Type</label>
+                  <label className="block text-xs font-semibold text-slate-300 mb-1">Type</label>
                   <select
                     value={productType}
                     onChange={(e) => setProductType(e.target.value as any)}
-                    className="w-full text-xs rounded-xl border border-slate-200 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                    className="w-full text-xs rounded-xl border border-slate-700 bg-slate-950 text-white px-3 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500"
                   >
                     <option value="SaaS">SaaS</option>
                     <option value="Service">Service</option>
@@ -368,47 +368,47 @@ export const ProductsPlans: React.FC = () => {
                 </div>
 
                 <div>
-                  <label className="block text-xs font-semibold text-slate-700 mb-1">Sales Price ($)</label>
+                  <label className="block text-xs font-semibold text-slate-300 mb-1">Sales Price ($)</label>
                   <input
                     type="number"
                     required
                     value={salesPrice}
                     onChange={(e) => setSalesPrice(parseFloat(e.target.value) || 0)}
-                    className="w-full text-xs rounded-xl border border-slate-200 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500 font-mono"
+                    className="w-full text-xs rounded-xl border border-slate-700 bg-slate-950 text-white px-3 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500 font-mono"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-xs font-semibold text-slate-700 mb-1">Cost Price ($)</label>
+                  <label className="block text-xs font-semibold text-slate-300 mb-1">Cost Price ($)</label>
                   <input
                     type="number"
                     required
                     value={costPrice}
                     onChange={(e) => setCostPrice(parseFloat(e.target.value) || 0)}
-                    className="w-full text-xs rounded-xl border border-slate-200 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500 font-mono"
+                    className="w-full text-xs rounded-xl border border-slate-700 bg-slate-950 text-white px-3 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500 font-mono"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-slate-700 mb-1">Internal Notes</label>
+                <label className="block text-xs font-semibold text-slate-300 mb-1">Internal Notes</label>
                 <textarea
                   rows={2}
                   placeholder="Product specs, hosting requirements..."
                   value={notes}
                   onChange={(e) => setNotes(e.target.value)}
-                  className="w-full text-xs rounded-xl border border-slate-200 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                  className="w-full text-xs rounded-xl border border-slate-700 bg-slate-950 text-white px-3 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500"
                 />
               </div>
 
               {/* Variants Section (Scene 2) */}
-              <div className="pt-2 border-t border-slate-100 space-y-2">
+              <div className="pt-2 border-t border-slate-800 space-y-2">
                 <div className="flex items-center justify-between">
-                  <label className="text-xs font-bold text-slate-700">Product Variants (e.g. Brand)</label>
+                  <label className="text-xs font-bold text-slate-300">Product Variants (e.g. Brand)</label>
                   <button
                     type="button"
                     onClick={handleAddVariant}
-                    className="text-purple-600 text-xs font-semibold hover:underline"
+                    className="text-purple-400 text-xs font-semibold hover:underline"
                   >
                     + Add Variant
                   </button>
@@ -421,7 +421,7 @@ export const ProductsPlans: React.FC = () => {
                       placeholder="Variant name (e.g. Odoo Brand)"
                       value={v.brand}
                       onChange={(e) => handleUpdateVariant(idx, e.target.value, v.extraPrice)}
-                      className="flex-1 text-xs rounded-xl border border-slate-200 px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                      className="flex-1 text-xs rounded-xl border border-slate-700 bg-slate-950 text-white px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-purple-500"
                     />
                     <div className="w-28 relative">
                       <span className="absolute left-2.5 top-1.5 text-xs text-slate-400">+$</span>
@@ -432,14 +432,14 @@ export const ProductsPlans: React.FC = () => {
                         onChange={(e) =>
                           handleUpdateVariant(idx, v.brand, parseFloat(e.target.value) || 0)
                         }
-                        className="w-full pl-7 pr-2 py-1.5 text-xs rounded-xl border border-slate-200 font-mono focus:outline-none focus:ring-2 focus:ring-purple-500"
+                        className="w-full pl-7 pr-2 py-1.5 text-xs rounded-xl border border-slate-700 bg-slate-950 text-white font-mono focus:outline-none focus:ring-2 focus:ring-purple-500"
                       />
                     </div>
                     {variants.length > 1 && (
                       <button
                         type="button"
                         onClick={() => handleRemoveVariant(idx)}
-                        className="text-slate-400 hover:text-rose-600 p-1"
+                        className="text-slate-500 hover:text-rose-400 p-1"
                       >
                         <X className="w-4 h-4" />
                       </button>
@@ -452,7 +452,7 @@ export const ProductsPlans: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => setIsAddProductOpen(false)}
-                  className="px-3.5 py-2 text-xs font-semibold text-slate-600 hover:bg-slate-100 rounded-xl"
+                  className="px-3.5 py-2 text-xs font-semibold text-slate-400 hover:bg-slate-800 rounded-xl"
                 >
                   Cancel
                 </button>
@@ -470,13 +470,13 @@ export const ProductsPlans: React.FC = () => {
 
       {/* Add Plan Modal (Admin only - Scene 2) */}
       {isAddPlanOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs animate-in fade-in">
-          <div className="bg-white rounded-2xl shadow-2xl max-w-lg w-full border border-slate-200 overflow-hidden">
-            <div className="p-5 border-b border-slate-100 flex items-center justify-between bg-slate-50">
-              <h3 className="font-bold text-slate-900 text-sm">Configure Subscription Plan</h3>
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm animate-in fade-in">
+          <div className="bg-slate-900 rounded-2xl shadow-2xl max-w-lg w-full border border-slate-800 overflow-hidden text-slate-100">
+            <div className="p-5 border-b border-slate-800 flex items-center justify-between bg-slate-950/60">
+              <h3 className="font-bold text-white text-sm">Configure Subscription Plan</h3>
               <button
                 onClick={() => setIsAddPlanOpen(false)}
-                className="p-1 text-slate-400 hover:text-slate-600 rounded-lg"
+                className="p-1 text-slate-400 hover:text-white rounded-lg"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -484,35 +484,35 @@ export const ProductsPlans: React.FC = () => {
 
             <form onSubmit={handleCreatePlan} className="p-6 space-y-4 max-h-[80vh] overflow-y-auto">
               <div>
-                <label className="block text-xs font-semibold text-slate-700 mb-1">Plan Name</label>
+                <label className="block text-xs font-semibold text-slate-300 mb-1">Plan Name</label>
                 <input
                   type="text"
                   required
                   placeholder="e.g. Brightloop Scale Pro"
                   value={planName}
                   onChange={(e) => setPlanName(e.target.value)}
-                  className="w-full text-xs rounded-xl border border-slate-200 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                  className="w-full text-xs rounded-xl border border-slate-700 bg-slate-950 text-white px-3 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500"
                 />
               </div>
 
               <div className="grid grid-cols-3 gap-3">
                 <div>
-                  <label className="block text-xs font-semibold text-slate-700 mb-1">Cost ($)</label>
+                  <label className="block text-xs font-semibold text-slate-300 mb-1">Cost ($)</label>
                   <input
                     type="number"
                     required
                     value={planCost}
                     onChange={(e) => setPlanCost(parseFloat(e.target.value) || 0)}
-                    className="w-full text-xs rounded-xl border border-slate-200 px-3 py-2 font-mono focus:outline-none focus:ring-2 focus:ring-purple-500"
+                    className="w-full text-xs rounded-xl border border-slate-700 bg-slate-950 text-white px-3 py-2 font-mono focus:outline-none focus:ring-2 focus:ring-purple-500"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-xs font-semibold text-slate-700 mb-1">Frequency</label>
+                  <label className="block text-xs font-semibold text-slate-300 mb-1">Frequency</label>
                   <select
                     value={billingFrequency}
                     onChange={(e) => setBillingFrequency(e.target.value as BillingFrequency)}
-                    className="w-full text-xs rounded-xl border border-slate-200 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                    className="w-full text-xs rounded-xl border border-slate-700 bg-slate-950 text-white px-3 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500"
                   >
                     <option value="daily">Daily</option>
                     <option value="weekly">Weekly</option>
@@ -522,54 +522,54 @@ export const ProductsPlans: React.FC = () => {
                 </div>
 
                 <div>
-                  <label className="block text-xs font-semibold text-slate-700 mb-1">Min Seats</label>
+                  <label className="block text-xs font-semibold text-slate-300 mb-1">Min Seats</label>
                   <input
                     type="number"
                     min="1"
                     required
                     value={minQuantity}
                     onChange={(e) => setMinQuantity(parseInt(e.target.value) || 1)}
-                    className="w-full text-xs rounded-xl border border-slate-200 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                    className="w-full text-xs rounded-xl border border-slate-700 bg-slate-950 text-white px-3 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500"
                   />
                 </div>
               </div>
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-xs font-semibold text-slate-700 mb-1">Available From</label>
+                  <label className="block text-xs font-semibold text-slate-300 mb-1">Available From</label>
                   <input
                     type="date"
                     required
                     value={startDate}
                     onChange={(e) => setStartDate(e.target.value)}
-                    className="w-full text-xs rounded-xl border border-slate-200 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                    className="w-full text-xs rounded-xl border border-slate-700 bg-slate-950 text-white px-3 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500"
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-semibold text-slate-700 mb-1">Available Until</label>
+                  <label className="block text-xs font-semibold text-slate-300 mb-1">Available Until</label>
                   <input
                     type="date"
                     required
                     value={endDate}
                     onChange={(e) => setEndDate(e.target.value)}
-                    className="w-full text-xs rounded-xl border border-slate-200 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                    className="w-full text-xs rounded-xl border border-slate-700 bg-slate-950 text-white px-3 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500"
                   />
                 </div>
               </div>
 
               {/* Lifecycle flags (Scene 2) */}
-              <div className="p-3 bg-slate-50 rounded-xl border border-slate-100 space-y-2">
-                <div className="text-xs font-bold text-slate-700">
+              <div className="p-3 bg-slate-950/60 rounded-xl border border-slate-800 space-y-2">
+                <div className="text-xs font-bold text-slate-300">
                   Lifecycle Rules (Scene 2 Plan Decider)
                 </div>
 
-                <div className="grid grid-cols-2 gap-2 text-xs">
+                <div className="grid grid-cols-2 gap-2 text-xs text-slate-300">
                   <label className="flex items-center gap-2 cursor-pointer">
                     <input
                       type="checkbox"
                       checked={autoCloseOnEnd}
                       onChange={(e) => setAutoCloseOnEnd(e.target.checked)}
-                      className="rounded text-purple-600 focus:ring-purple-500"
+                      className="rounded text-purple-600 focus:ring-purple-500 bg-slate-900 border-slate-700"
                     />
                     <span>Auto-close on end</span>
                   </label>
@@ -579,7 +579,7 @@ export const ProductsPlans: React.FC = () => {
                       type="checkbox"
                       checked={canCloseEarly}
                       onChange={(e) => setCanCloseEarly(e.target.checked)}
-                      className="rounded text-purple-600 focus:ring-purple-500"
+                      className="rounded text-purple-600 focus:ring-purple-500 bg-slate-900 border-slate-700"
                     />
                     <span>Allow early closure</span>
                   </label>
@@ -589,7 +589,7 @@ export const ProductsPlans: React.FC = () => {
                       type="checkbox"
                       checked={canPause}
                       onChange={(e) => setCanPause(e.target.checked)}
-                      className="rounded text-purple-600 focus:ring-purple-500"
+                      className="rounded text-purple-600 focus:ring-purple-500 bg-slate-900 border-slate-700"
                     />
                     <span>Allow pausing</span>
                   </label>
@@ -599,7 +599,7 @@ export const ProductsPlans: React.FC = () => {
                       type="checkbox"
                       checked={canRenew}
                       onChange={(e) => setCanRenew(e.target.checked)}
-                      className="rounded text-purple-600 focus:ring-purple-500"
+                      className="rounded text-purple-600 focus:ring-purple-500 bg-slate-900 border-slate-700"
                     />
                     <span>Allow renewals</span>
                   </label>
@@ -610,7 +610,7 @@ export const ProductsPlans: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => setIsAddPlanOpen(false)}
-                  className="px-3.5 py-2 text-xs font-semibold text-slate-600 hover:bg-slate-100 rounded-xl"
+                  className="px-3.5 py-2 text-xs font-semibold text-slate-400 hover:bg-slate-800 rounded-xl"
                 >
                   Cancel
                 </button>

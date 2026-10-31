@@ -27,7 +27,6 @@ export const Dashboard: React.FC<DashboardProps> = ({ onNavigate }) => {
   // Search & Filter state for Finance Lead
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedPlan, setSelectedPlan] = useState('all');
-  const [selectedTimeframe, setSelectedTimeframe] = useState('all');
 
   // Key Finance Metrics (Scene 7)
   const activeSubs = useMemo(() => subscriptions.filter((s) => s.status === 'Active'), [subscriptions]);
@@ -73,18 +72,18 @@ export const Dashboard: React.FC<DashboardProps> = ({ onNavigate }) => {
   };
 
   return (
-    <div className="space-y-6 animate-in fade-in duration-300">
+    <div className="space-y-6 animate-in fade-in duration-300 text-slate-100">
       {/* Top Banner & Scene 7 Header */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white p-6 rounded-2xl border border-slate-200 shadow-2xs">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-slate-900 p-6 rounded-2xl border border-slate-800 shadow-xl">
         <div>
-          <div className="flex items-center gap-2 text-xs font-bold text-purple-700 uppercase tracking-wider mb-1">
+          <div className="flex items-center gap-2 text-xs font-bold text-purple-400 uppercase tracking-wider mb-1">
             <Sparkles className="w-4 h-4" />
             <span>Scene 7: The Finance Lead, at the End of the Month</span>
           </div>
-          <h1 className="text-2xl font-extrabold text-slate-900 tracking-tight">
+          <h1 className="text-2xl font-extrabold text-white tracking-tight">
             Financial Health & Recurring Revenue
           </h1>
-          <p className="text-xs text-slate-500 mt-1 max-w-xl">
+          <p className="text-xs text-slate-400 mt-1 max-w-xl">
             Unified single-pane view of active recurring subscriptions, total collected revenue,
             outstanding balances, and overdue invoices.
           </p>
@@ -92,14 +91,12 @@ export const Dashboard: React.FC<DashboardProps> = ({ onNavigate }) => {
 
         {/* Scene 4 & 7 Quick Action */}
         <div className="flex items-center gap-3">
-          <div className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 bg-emerald-50 text-emerald-700 border border-emerald-200 rounded-xl text-xs font-semibold">
+          <div className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 bg-emerald-950/60 text-emerald-400 border border-emerald-800/60 rounded-xl text-xs font-semibold">
             <Clock className="w-3.5 h-3.5" />
             <span>Response: &lt; 8ms (&lt; 2.0s goal)</span>
           </div>
           <button
-            onClick={() => {
-              const res = runBillingDay();
-            }}
+            onClick={() => runBillingDay()}
             className="flex items-center gap-2 px-4 py-2.5 bg-purple-600 hover:bg-purple-700 text-white rounded-xl text-xs font-bold transition shadow-sm hover:shadow"
           >
             <Zap className="w-4 h-4" />
@@ -111,18 +108,18 @@ export const Dashboard: React.FC<DashboardProps> = ({ onNavigate }) => {
       {/* KPI Cards Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {/* Card 1: Active Subscriptions */}
-        <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-2xs hover:border-purple-200 transition">
+        <div className="bg-slate-900 p-5 rounded-2xl border border-slate-800 shadow-lg hover:border-purple-500/50 transition">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">
+            <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">
               Active Subscriptions
             </span>
-            <div className="p-2 bg-purple-50 text-purple-600 rounded-xl">
+            <div className="p-2 bg-purple-950/60 border border-purple-800/60 text-purple-400 rounded-xl">
               <Repeat className="w-4 h-4" />
             </div>
           </div>
           <div className="mt-3 flex items-baseline gap-2">
-            <span className="text-3xl font-extrabold text-slate-900">{activeSubsCount}</span>
-            <span className="text-xs font-semibold text-emerald-600 flex items-center">
+            <span className="text-3xl font-extrabold text-white">{activeSubsCount}</span>
+            <span className="text-xs font-semibold text-emerald-400 flex items-center">
               <ArrowUpRight className="w-3.5 h-3.5" />
               100% On Book
             </span>
@@ -133,41 +130,41 @@ export const Dashboard: React.FC<DashboardProps> = ({ onNavigate }) => {
         </div>
 
         {/* Card 2: Monthly Recurring Revenue (MRR) */}
-        <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-2xs hover:border-purple-200 transition">
+        <div className="bg-slate-900 p-5 rounded-2xl border border-slate-800 shadow-lg hover:border-purple-500/50 transition">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">
+            <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">
               Monthly Recurring (MRR)
             </span>
-            <div className="p-2 bg-emerald-50 text-emerald-600 rounded-xl">
+            <div className="p-2 bg-emerald-950/60 border border-emerald-800/60 text-emerald-400 rounded-xl">
               <TrendingUp className="w-4 h-4" />
             </div>
           </div>
           <div className="mt-3 flex items-baseline gap-2">
-            <span className="text-3xl font-extrabold text-slate-900">
+            <span className="text-3xl font-extrabold text-white">
               ${totalMRR.toLocaleString()}
             </span>
             <span className="text-xs text-slate-400">/mo</span>
           </div>
           <p className="text-[11px] text-slate-400 mt-1">
-            Projected ARR: <strong>${totalARR.toLocaleString()}</strong>
+            Projected ARR: <strong className="text-slate-200">${totalARR.toLocaleString()}</strong>
           </p>
         </div>
 
         {/* Card 3: Total Collected Revenue */}
-        <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-2xs hover:border-purple-200 transition">
+        <div className="bg-slate-900 p-5 rounded-2xl border border-slate-800 shadow-lg hover:border-purple-500/50 transition">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">
+            <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">
               Revenue Collected
             </span>
-            <div className="p-2 bg-blue-50 text-blue-600 rounded-xl">
+            <div className="p-2 bg-blue-950/60 border border-blue-800/60 text-blue-400 rounded-xl">
               <CreditCard className="w-4 h-4" />
             </div>
           </div>
           <div className="mt-3 flex items-baseline gap-2">
-            <span className="text-3xl font-extrabold text-slate-900">
+            <span className="text-3xl font-extrabold text-white">
               ${totalCollectedRevenue.toLocaleString()}
             </span>
-            <span className="text-xs font-semibold text-blue-600">
+            <span className="text-xs font-semibold text-blue-400">
               {payments.length} Payments
             </span>
           </div>
@@ -177,21 +174,21 @@ export const Dashboard: React.FC<DashboardProps> = ({ onNavigate }) => {
         </div>
 
         {/* Card 4: Still Owed / Overdue Alert */}
-        <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-2xs hover:border-purple-200 transition">
+        <div className="bg-slate-900 p-5 rounded-2xl border border-slate-800 shadow-lg hover:border-purple-500/50 transition">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">
+            <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">
               Outstanding Owed
             </span>
-            <div className="p-2 bg-rose-50 text-rose-600 rounded-xl">
+            <div className="p-2 bg-rose-950/60 border border-rose-800/60 text-rose-400 rounded-xl">
               <AlertOctagon className="w-4 h-4" />
             </div>
           </div>
           <div className="mt-3 flex items-baseline gap-2">
-            <span className="text-3xl font-extrabold text-rose-600">
+            <span className="text-3xl font-extrabold text-rose-400">
               ${totalOutstandingOwed.toLocaleString()}
             </span>
             {overdueInvoices.length > 0 && (
-              <span className="text-xs font-bold px-1.5 py-0.5 rounded-full bg-rose-100 text-rose-700">
+              <span className="text-xs font-bold px-1.5 py-0.5 rounded-full bg-rose-950 text-rose-300 border border-rose-800/60">
                 {overdueInvoices.length} Overdue
               </span>
             )}
@@ -202,17 +199,17 @@ export const Dashboard: React.FC<DashboardProps> = ({ onNavigate }) => {
         </div>
       </div>
 
-      {/* Overdue Invoices Alert Section (Scene 6: "chased before they turn into lost revenue") */}
+      {/* Overdue Invoices Alert Section (Scene 6) */}
       {overdueInvoices.length > 0 && (
-        <div className="bg-gradient-to-r from-rose-50 to-amber-50/50 p-5 rounded-2xl border border-rose-200 shadow-2xs space-y-3">
+        <div className="bg-gradient-to-r from-rose-950/40 to-amber-950/30 p-5 rounded-2xl border border-rose-900/60 shadow-lg space-y-3">
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2 text-rose-800 font-bold text-sm">
-              <AlertOctagon className="w-4.5 h-4.5 text-rose-600" />
+            <div className="flex items-center gap-2 text-rose-300 font-bold text-sm">
+              <AlertOctagon className="w-4.5 h-4.5 text-rose-400" />
               <span>Attention: {overdueInvoices.length} Overdue Invoices Awaiting Payment</span>
             </div>
             <button
               onClick={() => onNavigate('invoices')}
-              className="text-xs font-bold text-rose-700 hover:text-rose-900 underline"
+              className="text-xs font-bold text-rose-400 hover:text-rose-300 underline"
             >
               View Invoices Table &rarr;
             </button>
@@ -222,24 +219,24 @@ export const Dashboard: React.FC<DashboardProps> = ({ onNavigate }) => {
             {overdueInvoices.map((inv) => (
               <div
                 key={inv.id}
-                className="bg-white p-3.5 rounded-xl border border-rose-200/80 flex items-center justify-between shadow-2xs"
+                className="bg-slate-900/90 p-3.5 rounded-xl border border-rose-900/60 flex items-center justify-between shadow-md"
               >
                 <div>
                   <div className="flex items-center gap-2">
-                    <span className="font-bold text-xs text-slate-900">{inv.number}</span>
-                    <span className="text-[10px] bg-rose-100 text-rose-700 font-bold px-1.5 py-0.2 rounded">
+                    <span className="font-bold text-xs text-white">{inv.number}</span>
+                    <span className="text-[10px] bg-rose-950 text-rose-300 font-bold px-1.5 py-0.2 rounded border border-rose-800/60">
                       Due: {inv.dueDate}
                     </span>
                   </div>
-                  <div className="text-xs text-slate-600 font-medium mt-0.5">{inv.customerName}</div>
-                  <div className="text-xs font-bold text-rose-600 mt-0.5">
+                  <div className="text-xs text-slate-300 font-medium mt-0.5">{inv.customerName}</div>
+                  <div className="text-xs font-bold text-rose-400 mt-0.5">
                     Amount Owed: ${(inv.total - inv.amountPaid).toLocaleString()}
                   </div>
                 </div>
 
                 <button
                   onClick={() => handleChasePayment(inv.number, inv.customerEmail)}
-                  className="px-3 py-1.5 bg-rose-50 hover:bg-rose-600 hover:text-white text-rose-700 text-xs font-bold rounded-xl transition flex items-center gap-1.5 border border-rose-200 shrink-0"
+                  className="px-3 py-1.5 bg-rose-950/60 hover:bg-rose-900 text-rose-300 text-xs font-bold rounded-xl transition flex items-center gap-1.5 border border-rose-800/60 shrink-0"
                 >
                   <Send className="w-3.5 h-3.5" />
                   <span>Chase Payment</span>
@@ -251,11 +248,11 @@ export const Dashboard: React.FC<DashboardProps> = ({ onNavigate }) => {
       )}
 
       {/* Active Subscriptions Summary & Search Filters */}
-      <div className="bg-white rounded-2xl border border-slate-200 shadow-2xs overflow-hidden">
-        <div className="p-5 border-b border-slate-100 flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div className="bg-slate-900 rounded-2xl border border-slate-800 shadow-xl overflow-hidden">
+        <div className="p-5 border-b border-slate-800 flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
-            <h3 className="font-bold text-base text-slate-900">Subscription Portfolio Summary</h3>
-            <p className="text-xs text-slate-500">
+            <h3 className="font-bold text-base text-white">Subscription Portfolio Summary</h3>
+            <p className="text-xs text-slate-400">
               Live recurring contracts, billing cycles, and next auto-invoicing dates
             </p>
           </div>
@@ -269,14 +266,14 @@ export const Dashboard: React.FC<DashboardProps> = ({ onNavigate }) => {
                 placeholder="Search customer or ID..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-9 pr-3 py-1.5 text-xs rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                className="pl-9 pr-3 py-1.5 text-xs rounded-xl border border-slate-700 bg-slate-950 text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-purple-500"
               />
             </div>
 
             <select
               value={selectedPlan}
               onChange={(e) => setSelectedPlan(e.target.value)}
-              className="text-xs rounded-xl border border-slate-200 px-3 py-1.5 bg-white text-slate-700 focus:outline-none focus:ring-2 focus:ring-purple-500"
+              className="text-xs rounded-xl border border-slate-700 px-3 py-1.5 bg-slate-950 text-slate-200 focus:outline-none focus:ring-2 focus:ring-purple-500"
             >
               <option value="all">All Plans</option>
               {plans.map((p) => (
@@ -288,7 +285,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ onNavigate }) => {
 
             <button
               onClick={() => onNavigate('subscriptions')}
-              className="px-3 py-1.5 bg-purple-50 text-purple-700 hover:bg-purple-100 text-xs font-semibold rounded-xl transition"
+              className="px-3 py-1.5 bg-purple-950/60 border border-purple-800/60 text-purple-300 hover:bg-purple-900/60 text-xs font-semibold rounded-xl transition"
             >
               View Full Table &rarr;
             </button>
@@ -298,48 +295,48 @@ export const Dashboard: React.FC<DashboardProps> = ({ onNavigate }) => {
         {/* Subscriptions Table */}
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs">
-            <thead className="bg-slate-50 text-slate-500 uppercase tracking-wider font-semibold border-b border-slate-200">
+            <thead className="bg-slate-950/60 text-slate-400 uppercase tracking-wider font-semibold border-b border-slate-800">
               <tr>
                 <th className="px-5 py-3.5">Subscription</th>
                 <th className="px-5 py-3.5">Customer</th>
                 <th className="px-5 py-3.5">Plan</th>
                 <th className="px-5 py-3.5">Status</th>
                 <th className="px-5 py-3.5">Next Billing</th>
-                <th className="px-5 py-3.5">Recurring Amount</th>
+                <th className="px-5 py-3.5 text-right pr-8">Recurring Amount</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-100">
+            <tbody className="divide-y divide-slate-800">
               {filteredSubscriptions.map((sub) => {
                 const statusStyles: Record<string, string> = {
-                  Active: 'bg-emerald-100 text-emerald-800',
-                  Draft: 'bg-slate-100 text-slate-700',
-                  Quotation: 'bg-indigo-100 text-indigo-800',
-                  Confirmed: 'bg-blue-100 text-blue-800',
-                  Paused: 'bg-amber-100 text-amber-800',
-                  Closed: 'bg-rose-100 text-rose-800',
+                  Active: 'bg-emerald-950 text-emerald-300 border border-emerald-800/60',
+                  Draft: 'bg-slate-800 text-slate-300 border border-slate-700',
+                  Quotation: 'bg-indigo-950 text-indigo-300 border border-indigo-800/60',
+                  Confirmed: 'bg-blue-950 text-blue-300 border border-blue-800/60',
+                  Paused: 'bg-amber-950 text-amber-300 border border-amber-800/60',
+                  Closed: 'bg-rose-950 text-rose-300 border border-rose-800/60',
                 };
 
                 return (
-                  <tr key={sub.id} className="hover:bg-slate-50/80 transition">
-                    <td className="px-5 py-4 font-bold text-slate-900">{sub.number}</td>
+                  <tr key={sub.id} className="hover:bg-slate-800/50 transition">
+                    <td className="px-5 py-4 font-bold text-white">{sub.number}</td>
                     <td className="px-5 py-4">
-                      <div className="font-semibold text-slate-800">{sub.customerName}</div>
+                      <div className="font-semibold text-slate-200">{sub.customerName}</div>
                       <div className="text-[11px] text-slate-400">{sub.customerEmail}</div>
                     </td>
-                    <td className="px-5 py-4 text-slate-700 font-medium">{sub.planName}</td>
+                    <td className="px-5 py-4 text-slate-300 font-medium">{sub.planName}</td>
                     <td className="px-5 py-4">
                       <span
                         className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${
-                          statusStyles[sub.status] || 'bg-slate-100 text-slate-800'
+                          statusStyles[sub.status] || 'bg-slate-800 text-slate-300'
                         }`}
                       >
                         {sub.status}
                       </span>
                     </td>
-                    <td className="px-5 py-4 text-slate-600 font-mono text-[11px]">
+                    <td className="px-5 py-4 text-slate-400 font-mono text-[11px]">
                       {sub.nextBillingDate}
                     </td>
-                    <td className="px-5 py-4 font-bold text-slate-900 text-right pr-8">
+                    <td className="px-5 py-4 font-bold text-white font-mono text-right pr-8">
                       ${sub.totalAmount.toLocaleString()}
                     </td>
                   </tr>

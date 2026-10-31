@@ -118,37 +118,37 @@ export const VerificationGuide: React.FC<VerificationGuideProps> = ({
   ];
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-end bg-slate-900/50 backdrop-blur-xs animate-in fade-in">
-      <div className="bg-white h-full w-full max-w-2xl shadow-2xl flex flex-col border-l border-slate-200 animate-in slide-in-from-right duration-300">
+    <div className="fixed inset-0 z-50 flex items-center justify-end bg-slate-950/80 backdrop-blur-sm animate-in fade-in">
+      <div className="bg-slate-900 h-full w-full max-w-2xl shadow-2xl flex flex-col border-l border-slate-800 animate-in slide-in-from-right duration-300 text-slate-100">
         {/* Header */}
-        <div className="p-6 border-b border-slate-100 flex items-center justify-between bg-slate-50/70">
+        <div className="p-6 border-b border-slate-800 flex items-center justify-between bg-slate-950/80">
           <div className="flex items-center gap-3">
-            <div className="p-2 bg-purple-100 text-purple-700 rounded-xl">
+            <div className="p-2 bg-purple-950/80 border border-purple-800/60 text-purple-400 rounded-xl">
               <BookOpen className="w-5 h-5" />
             </div>
             <div>
-              <h2 className="text-lg font-bold text-slate-900">Project Verification & Learning Guide</h2>
-              <p className="text-xs text-slate-500">
+              <h2 className="text-lg font-bold text-white">Project Verification & Learning Guide</h2>
+              <p className="text-xs text-slate-400">
                 Interactive companion for the Odoo Subscription Management challenge
               </p>
             </div>
           </div>
           <button
             onClick={onClose}
-            className="p-2 text-slate-400 hover:text-slate-600 rounded-xl hover:bg-slate-200/60 transition"
+            className="p-2 text-slate-400 hover:text-white rounded-xl hover:bg-slate-800 transition"
           >
             <X className="w-5 h-5" />
           </button>
         </div>
 
         {/* Tab selection */}
-        <div className="flex border-b border-slate-200 px-6 bg-white gap-6">
+        <div className="flex border-b border-slate-800 px-6 bg-slate-900 gap-6">
           <button
             onClick={() => setActiveTab('scenes')}
             className={`py-3 text-sm font-semibold border-b-2 transition flex items-center gap-2 ${
               activeTab === 'scenes'
-                ? 'border-purple-600 text-purple-600'
-                : 'border-transparent text-slate-500 hover:text-slate-800'
+                ? 'border-purple-500 text-purple-400 font-bold'
+                : 'border-transparent text-slate-400 hover:text-slate-200'
             }`}
           >
             <Sparkles className="w-4 h-4" />
@@ -158,8 +158,8 @@ export const VerificationGuide: React.FC<VerificationGuideProps> = ({
             onClick={() => setActiveTab('learning')}
             className={`py-3 text-sm font-semibold border-b-2 transition flex items-center gap-2 ${
               activeTab === 'learning'
-                ? 'border-purple-600 text-purple-600'
-                : 'border-transparent text-slate-500 hover:text-slate-800'
+                ? 'border-purple-500 text-purple-400 font-bold'
+                : 'border-transparent text-slate-400 hover:text-slate-200'
             }`}
           >
             <HelpCircle className="w-4 h-4" />
@@ -171,16 +171,16 @@ export const VerificationGuide: React.FC<VerificationGuideProps> = ({
         <div className="flex-1 overflow-y-auto p-6 space-y-6">
           {activeTab === 'scenes' && (
             <div className="space-y-4">
-              <div className="p-4 bg-purple-50/70 border border-purple-100 rounded-2xl flex items-center justify-between">
+              <div className="p-4 bg-purple-950/40 border border-purple-800/60 rounded-2xl flex items-center justify-between">
                 <div>
-                  <div className="text-xs font-bold text-purple-900">Brightloop Software Scenario Testing</div>
-                  <div className="text-xs text-purple-700 mt-0.5">
+                  <div className="text-xs font-bold text-purple-300">Brightloop Software Scenario Testing</div>
+                  <div className="text-xs text-purple-200/80 mt-0.5">
                     Click any action button below to jump straight to that feature with appropriate demo state.
                   </div>
                 </div>
                 <button
                   onClick={resetToDemoData}
-                  className="px-3 py-1.5 bg-white border border-purple-200 text-purple-700 text-xs font-semibold rounded-lg hover:bg-purple-100/50 flex items-center gap-1.5 transition shrink-0"
+                  className="px-3 py-1.5 bg-slate-800 border border-slate-700 text-purple-300 text-xs font-semibold rounded-lg hover:bg-slate-700 flex items-center gap-1.5 transition shrink-0"
                 >
                   <RefreshCw className="w-3.5 h-3.5" />
                   Reset Demo
@@ -190,28 +190,28 @@ export const VerificationGuide: React.FC<VerificationGuideProps> = ({
               {scenes.map((scene) => (
                 <div
                   key={scene.num}
-                  className="p-5 rounded-2xl border border-slate-200 hover:border-purple-300 hover:shadow-md transition bg-white space-y-3"
+                  className="p-5 rounded-2xl border border-slate-800 hover:border-purple-500/50 hover:shadow-lg transition bg-slate-950/60 space-y-3"
                 >
                   <div className="flex items-start justify-between gap-4">
                     <div className="flex items-center gap-2.5">
                       <span className="w-6 h-6 rounded-full bg-purple-600 text-white font-bold text-xs flex items-center justify-center shrink-0">
                         {scene.num}
                       </span>
-                      <h3 className="font-bold text-slate-900 text-sm">{scene.title}</h3>
+                      <h3 className="font-bold text-white text-sm">{scene.title}</h3>
                     </div>
                     <button
                       onClick={scene.action}
-                      className="px-3 py-1.5 bg-purple-50 text-purple-700 hover:bg-purple-600 hover:text-white transition rounded-xl text-xs font-semibold flex items-center gap-1 shrink-0"
+                      className="px-3 py-1.5 bg-purple-950/80 text-purple-300 hover:bg-purple-600 hover:text-white transition rounded-xl text-xs font-semibold flex items-center gap-1 border border-purple-800/60 shrink-0"
                     >
                       <span>{scene.actionLabel}</span>
                       <ChevronRight className="w-3.5 h-3.5" />
                     </button>
                   </div>
 
-                  <p className="text-xs text-slate-600 leading-relaxed pl-8.5">{scene.desc}</p>
+                  <p className="text-xs text-slate-300 leading-relaxed pl-8.5">{scene.desc}</p>
 
-                  <div className="ml-8.5 p-2.5 bg-slate-50 rounded-xl text-[11px] text-slate-500 flex items-start gap-2">
-                    <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
+                  <div className="ml-8.5 p-2.5 bg-slate-900 rounded-xl border border-slate-800 text-[11px] text-slate-400 flex items-start gap-2">
+                    <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
                     <span><strong>Verification Tip:</strong> {scene.roleCheck}</span>
                   </div>
                 </div>
@@ -220,68 +220,68 @@ export const VerificationGuide: React.FC<VerificationGuideProps> = ({
           )}
 
           {activeTab === 'learning' && (
-            <div className="space-y-5 text-sm text-slate-700">
-              <div className="p-4 bg-indigo-50 border border-indigo-100 rounded-2xl text-xs text-indigo-900 leading-relaxed">
+            <div className="space-y-5 text-sm text-slate-300">
+              <div className="p-4 bg-indigo-950/40 border border-indigo-800/60 rounded-2xl text-xs text-indigo-300 leading-relaxed">
                 <strong>Why this architecture?</strong> As a beginner to web development, this guide explains how the pieces fit together so you can confidently answer questions during evaluation.
               </div>
 
               {/* Concept 1 */}
-              <div className="border border-slate-200 rounded-2xl p-4 bg-white space-y-2">
-                <h4 className="font-bold text-slate-900 flex items-center gap-2 text-sm">
-                  <span className="w-5 h-5 rounded-md bg-blue-100 text-blue-700 flex items-center justify-center text-xs">1</span>
+              <div className="border border-slate-800 rounded-2xl p-4 bg-slate-950/60 space-y-2">
+                <h4 className="font-bold text-white flex items-center gap-2 text-sm">
+                  <span className="w-5 h-5 rounded-md bg-blue-950 text-blue-400 border border-blue-800/60 flex items-center justify-center text-xs">1</span>
                   What is Frontend Web Development?
                 </h4>
-                <p className="text-xs text-slate-600 leading-relaxed">
-                  Frontend is everything the user sees, clicks, and interacts with in their web browser. It transforms raw data (like subscription plans, tax calculations, and invoices) into an intuitive, responsive graphical user interface (GUI).
+                <p className="text-xs text-slate-300 leading-relaxed">
+                  Frontend is everything the user sees, clicks, and interacts with in their web browser. It transforms raw data into an intuitive, responsive graphical user interface (GUI).
                 </p>
-                <div className="text-[11px] bg-slate-50 p-2.5 rounded-lg text-slate-600">
+                <div className="text-[11px] bg-slate-900 p-2.5 rounded-lg border border-slate-800 text-slate-400">
                   <strong>The 3 Core Pillars:</strong>
                   <ul className="list-disc list-inside mt-1 space-y-0.5">
                     <li><strong>HTML5:</strong> Defines structure (buttons, tables, headings).</li>
-                    <li><strong>Tailwind CSS v4:</strong> Controls visual presentation (colors, spacing, typography, grid layouts).</li>
+                    <li><strong>Tailwind CSS v4:</strong> Controls visual presentation (colors, dark mode tokens, spacing, typography).</li>
                     <li><strong>TypeScript / React:</strong> Controls interactivity, calculations, state, and business rules.</li>
                   </ul>
                 </div>
               </div>
 
               {/* Concept 2 */}
-              <div className="border border-slate-200 rounded-2xl p-4 bg-white space-y-2">
-                <h4 className="font-bold text-slate-900 flex items-center gap-2 text-sm">
-                  <span className="w-5 h-5 rounded-md bg-purple-100 text-purple-700 flex items-center justify-center text-xs">2</span>
+              <div className="border border-slate-800 rounded-2xl p-4 bg-slate-950/60 space-y-2">
+                <h4 className="font-bold text-white flex items-center gap-2 text-sm">
+                  <span className="w-5 h-5 rounded-md bg-purple-950 text-purple-400 border border-purple-800/60 flex items-center justify-center text-xs">2</span>
                   Why React + Vite instead of plain HTML/JS?
                 </h4>
-                <p className="text-xs text-slate-600 leading-relaxed">
-                  <strong>React</strong> uses a component-based model. Instead of copying and pasting table rows or buttons across 10 files, we write reusable components (like <code>&lt;Badge /&gt;</code>, <code>&lt;InvoiceCard /&gt;</code>). When data changes (e.g. paying an invoice), React updates only that specific DOM element instantly without reloading the page.
+                <p className="text-xs text-slate-300 leading-relaxed">
+                  <strong>React</strong> uses a component-based model. Instead of copying and pasting code, we write reusable components. When state changes, React updates only that specific DOM element instantly without reloading the page.
                 </p>
-                <p className="text-xs text-slate-600 leading-relaxed">
-                  <strong>Vite</strong> is the modern build tool powering instant hot-module reloading (HMR) and sub-second builds using native ES modules.
+                <p className="text-xs text-slate-300 leading-relaxed">
+                  <strong>Vite</strong> is the modern build tool powering instant hot-module reloading (HMR) and sub-second builds.
                 </p>
               </div>
 
               {/* Concept 3 */}
-              <div className="border border-slate-200 rounded-2xl p-4 bg-white space-y-2">
-                <h4 className="font-bold text-slate-900 flex items-center gap-2 text-sm">
-                  <span className="w-5 h-5 rounded-md bg-emerald-100 text-emerald-700 flex items-center justify-center text-xs">3</span>
+              <div className="border border-slate-800 rounded-2xl p-4 bg-slate-950/60 space-y-2">
+                <h4 className="font-bold text-white flex items-center gap-2 text-sm">
+                  <span className="w-5 h-5 rounded-md bg-emerald-950 text-emerald-400 border border-emerald-800/60 flex items-center justify-center text-xs">3</span>
                   How is State Managed? (The AppContext)
                 </h4>
-                <p className="text-xs text-slate-600 leading-relaxed">
-                  State is the living memory of our application. We use <strong>React Context API</strong> (<code>AppContext.tsx</code>). Any page or modal can read or mutate the active subscriptions, invoices, or logged-in user without messy prop-drilling.
+                <p className="text-xs text-slate-300 leading-relaxed">
+                  State is the living memory of our application. We use <strong>React Context API</strong> (<code>AppContext.tsx</code>). Any page or modal can read or mutate the active subscriptions, invoices, or logged-in user without prop-drilling.
                 </p>
-                <p className="text-xs text-slate-600 leading-relaxed">
-                  We also persist state to the browser's <code>localStorage</code>, so your created products, changed statuses, or recorded payments stay intact even if you refresh your browser.
+                <p className="text-xs text-slate-300 leading-relaxed">
+                  We also persist state to browser <code>localStorage</code>, so your created products, status changes, and recorded payments stay intact even on page refresh.
                 </p>
               </div>
 
               {/* Concept 4 */}
-              <div className="border border-slate-200 rounded-2xl p-4 bg-white space-y-2">
-                <h4 className="font-bold text-slate-900 flex items-center gap-2 text-sm">
-                  <span className="w-5 h-5 rounded-md bg-amber-100 text-amber-700 flex items-center justify-center text-xs">4</span>
+              <div className="border border-slate-800 rounded-2xl p-4 bg-slate-950/60 space-y-2">
+                <h4 className="font-bold text-white flex items-center gap-2 text-sm">
+                  <span className="w-5 h-5 rounded-md bg-amber-950 text-amber-400 border border-amber-800/60 flex items-center justify-center text-xs">4</span>
                   How is Role-Based Access Control (RBAC) enforced?
                 </h4>
-                <p className="text-xs text-slate-600 leading-relaxed">
+                <p className="text-xs text-slate-300 leading-relaxed">
                   We check the active role (<code>admin</code>, <code>staff</code>, or <code>customer</code>) to conditionally render views and disable unauthorized actions:
                 </p>
-                <ul className="text-xs text-slate-600 list-disc list-inside space-y-1">
+                <ul className="text-xs text-slate-400 list-disc list-inside space-y-1">
                   <li><strong>Admin:</strong> Can add staff, configure plans, set tax and discount rules.</li>
                   <li><strong>Staff:</strong> Can prepare quotes, convert them to subscriptions, run billing day, record payments.</li>
                   <li><strong>Customer:</strong> Scoped strictly to records matching their <code>customerId</code> (portal self-service).</li>
@@ -289,28 +289,22 @@ export const VerificationGuide: React.FC<VerificationGuideProps> = ({
               </div>
 
               {/* Concept 5 */}
-              <div className="border border-slate-200 rounded-2xl p-4 bg-white space-y-2">
-                <h4 className="font-bold text-slate-900 flex items-center gap-2 text-sm">
-                  <span className="w-5 h-5 rounded-md bg-rose-100 text-rose-700 flex items-center justify-center text-xs">5</span>
+              <div className="border border-slate-800 rounded-2xl p-4 bg-slate-950/60 space-y-2">
+                <h4 className="font-bold text-white flex items-center gap-2 text-sm">
+                  <span className="w-5 h-5 rounded-md bg-rose-950 text-rose-400 border border-rose-800/60 flex items-center justify-center text-xs">5</span>
                   Questions You Might Be Asked & How to Answer
                 </h4>
                 <div className="space-y-2 text-xs">
-                  <div className="p-2.5 bg-slate-50 rounded-xl">
-                    <span className="font-bold text-slate-800">Q: "How do you ensure invoices aren't billed twice?"</span>
-                    <p className="text-slate-600 mt-0.5">
-                      <strong>Answer:</strong> The billing engine compares each active subscription's <code>nextBillingDate</code> with today's date. When an invoice is generated, the <code>lastBilledDate</code> is stamped and <code>nextBillingDate</code> is advanced to the next period. Repeated clicks on "Run Billing Day" detect that no active subscriptions are due.
+                  <div className="p-2.5 bg-slate-900 rounded-xl border border-slate-800">
+                    <span className="font-bold text-white">Q: "How do you ensure invoices aren't billed twice?"</span>
+                    <p className="text-slate-400 mt-0.5">
+                      <strong>Answer:</strong> The billing engine compares each active subscription's <code>nextBillingDate</code> with today's date. When an invoice is generated, the <code>lastBilledDate</code> is stamped and <code>nextBillingDate</code> is advanced to the next period.
                     </p>
                   </div>
-                  <div className="p-2.5 bg-slate-50 rounded-xl">
-                    <span className="font-bold text-slate-800">Q: "How are discounts and taxes calculated?"</span>
-                    <p className="text-slate-600 mt-0.5">
-                      <strong>Answer:</strong> Every line item has a base price + variant delta. The tax rule computes tax percentage (default 10%). Discount rules validate minimum seat quantity / amount and apply either a percentage or fixed amount before calculating the final invoice total.
-                    </p>
-                  </div>
-                  <div className="p-2.5 bg-slate-50 rounded-xl">
-                    <span className="font-bold text-slate-800">Q: "Why does the app feel so fast?"</span>
-                    <p className="text-slate-600 mt-0.5">
-                      <strong>Answer:</strong> It operates as a Single-Page Application (SPA) with in-memory state indexed by IDs and optimized re-renders. Every filter and view transition responds in milliseconds, satisfying the sub-2-second requirement from Scene 7.
+                  <div className="p-2.5 bg-slate-900 rounded-xl border border-slate-800">
+                    <span className="font-bold text-white">Q: "How are discounts and taxes calculated?"</span>
+                    <p className="text-slate-400 mt-0.5">
+                      <strong>Answer:</strong> Line items add base price + variant delta. The tax rule computes tax percentage (10% standard). Discount rules validate minimum seat quantity / amount and apply either a percentage or fixed amount before calculating the final invoice total.
                     </p>
                   </div>
                 </div>
