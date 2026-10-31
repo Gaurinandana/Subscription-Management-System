@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { useApp } from '../../context/AppContext';
-import { Subscription, SubscriptionStatus } from '../../types';
+import { useApp } from '../context/AppContext';
+import { Subscription, SubscriptionStatus } from '../types';
 import {
   Repeat,
   Plus,
