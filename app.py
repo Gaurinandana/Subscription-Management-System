@@ -52,6 +52,9 @@ def create_app():
     from routes.payments import payments_bp
     app.register_blueprint(payments_bp)
 
+    from routes.dashboard import dashboard_bp
+    app.register_blueprint(dashboard_bp)
+
     # Create database tables
     with app.app_context():
         db.create_all()
