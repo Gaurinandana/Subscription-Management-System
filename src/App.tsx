@@ -59,7 +59,7 @@ export const App: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-slate-950 flex flex-col font-sans text-slate-100">
+    <div className="min-h-screen bg-[#ffffff] flex flex-col font-sans text-[#17191c]">
       {/* Top Navigation Bar */}
       <Navbar
         onOpenVerificationGuide={() => setIsVerificationGuideOpen(true)}
@@ -74,7 +74,7 @@ export const App: React.FC = () => {
           onOpenVerificationGuide={() => setIsVerificationGuideOpen(true)}
         />
 
-        <main className="flex-1 p-4 sm:p-6 lg:p-8 overflow-y-auto max-w-7xl mx-auto w-full">
+        <main className="flex-1 p-4 sm:p-6 lg:p-8 overflow-y-auto max-w-[1400px] mx-auto w-full">
           {renderActivePage()}
         </main>
       </div>

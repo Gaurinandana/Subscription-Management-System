@@ -43,89 +43,85 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenVerificationGuide, onOpenA
   ];
 
   return (
-    <header className="sticky top-0 z-40 bg-slate-900/90 backdrop-blur-md border-b border-slate-800 px-4 sm:px-6 py-3">
-      <div className="flex items-center justify-between gap-4">
-        {/* Brand identity */}
+    <header className="sticky top-0 z-40 bg-[#ffffff]/90 backdrop-blur-md border-b border-[#ececec] px-4 sm:px-8 py-3.5">
+      <div className="flex items-center justify-between gap-4 max-w-[1400px] mx-auto">
+        {/* Brand identity — Serif display with editorial quiet elegance */}
         <div className="flex items-center gap-3">
-          <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-purple-600 to-indigo-500 flex items-center justify-center text-white shadow-md shadow-purple-500/20">
-            <Layers className="w-5 h-5" />
+          <div className="w-8 h-8 rounded-full bg-[#17191c] flex items-center justify-center text-[#ffffff]">
+            <Layers className="w-4 h-4" />
           </div>
           <div>
-            <div className="flex items-center gap-2">
-              <span className="font-extrabold text-white tracking-tight text-base sm:text-lg">
-                Brightloop<span className="text-purple-400">.</span>
+            <div className="flex items-baseline gap-2.5">
+              <span className="font-serif text-xl tracking-tight text-[#17191c]">
+                Brightloop
               </span>
-              <span className="hidden sm:inline-block px-2 py-0.5 rounded-full text-[10px] font-bold bg-purple-950/80 text-purple-300 border border-purple-800/60 uppercase tracking-wide">
+              <span className="text-[12px] text-[#979799] tracking-wider uppercase font-normal hidden sm:inline-block">
                 Odoo Challenge
               </span>
             </div>
-            <p className="text-[11px] text-slate-400 hidden md:block">
-              Unified Subscription Management & Recurring Billing Platform
-            </p>
           </div>
         </div>
 
-        {/* Action Controls & Interactive Role Switcher */}
+        {/* Action Controls & Steep Pill Buttons */}
         <div className="flex items-center gap-2 sm:gap-3">
-          {/* Quick Sign up test button for Scene 1 */}
+          {/* Quick Sign up test button (Ghost Pill) */}
           <button
             onClick={onOpenAuth}
-            className="hidden md:flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-slate-200 hover:text-white bg-slate-800 hover:bg-slate-700 rounded-xl transition border border-slate-700/80"
+            className="hidden md:flex items-center gap-1.5 px-4 py-1.5 text-xs font-medium text-[#17191c] border border-[#17191c] hover:bg-[#f2f2f3] rounded-full transition"
             title="Test Scene 1: Sign Up with strict password rules"
           >
-            <UserPlus className="w-3.5 h-3.5 text-purple-400" />
+            <UserPlus className="w-3.5 h-3.5 text-[#17191c]" />
             <span>Sign Up (Scene 1)</span>
           </button>
 
-          {/* Interactive Verification Walkthrough Guide */}
+          {/* Verification Walkthrough Guide (Filled Lozenge Pill) */}
           <button
             onClick={onOpenVerificationGuide}
-            className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-purple-300 bg-purple-950/60 hover:bg-purple-900/60 border border-purple-800/80 rounded-xl transition shadow-xs"
+            className="flex items-center gap-1.5 px-4 py-1.5 text-xs font-medium text-[#ffffff] bg-[#17191c] hover:bg-black rounded-full transition"
           >
-            <Sparkles className="w-3.5 h-3.5 text-purple-400 animate-pulse" />
-            <span className="font-bold">Verify PDF Scenes</span>
+            <Sparkles className="w-3.5 h-3.5 text-[#fbe1d1]" />
+            <span>Verify PDF Scenes</span>
           </button>
 
           {/* Reset Demo Data button */}
           <button
             onClick={resetToDemoData}
             title="Reset data to initial state"
-            className="p-1.5 text-slate-400 hover:text-slate-200 hover:bg-slate-800 rounded-xl transition"
+            className="p-2 text-[#777b86] hover:text-[#17191c] hover:bg-[#f2f2f3] rounded-full transition"
           >
             <RefreshCw className="w-4 h-4" />
           </button>
 
-          <div className="h-6 w-px bg-slate-800" />
+          <div className="h-5 w-px bg-[#ececec]" />
 
           {/* Role Switcher Menu */}
           <div className="relative">
             <button
               onClick={() => setRoleDropdownOpen(!roleDropdownOpen)}
-              className="flex items-center gap-2.5 p-1.5 sm:px-3 sm:py-1.5 rounded-xl border border-slate-700/80 bg-slate-800/80 hover:bg-slate-800 transition text-left"
+              className="flex items-center gap-2.5 px-3 py-1.5 rounded-full border border-[#ececec] bg-[#ffffff] hover:bg-[#f2f2f3] transition text-left shadow-xs"
             >
               <img
                 src={currentUser.avatar}
                 alt={currentUser.name}
-                className="w-7 h-7 rounded-lg object-cover ring-1 ring-purple-500/40"
+                className="w-6 h-6 rounded-full object-cover ring-1 ring-[#17191c]/10"
               />
               <div className="hidden sm:block text-left">
-                <div className="text-xs font-bold text-white flex items-center gap-1.5">
+                <div className="text-xs font-medium text-[#17191c] flex items-center gap-1.5">
                   <span>{currentUser.name}</span>
                   <span
-                    className={`px-1.5 py-0.2 rounded text-[10px] uppercase font-bold ${
+                    className={`px-2 py-0.5 rounded-full text-[10px] font-medium ${
                       currentUser.role === 'admin'
-                        ? 'bg-purple-950 text-purple-300 border border-purple-800/60'
+                        ? 'bg-[#17191c] text-[#ffffff]'
                         : currentUser.role === 'staff'
-                        ? 'bg-blue-950 text-blue-300 border border-blue-800/60'
-                        : 'bg-emerald-950 text-emerald-300 border border-emerald-800/60'
+                        ? 'bg-[#f2f2f3] text-[#17191c]'
+                        : 'bg-[#fbe1d1] text-[#5d2a1a]'
                     }`}
                   >
                     {currentUser.role}
                   </span>
                 </div>
-                <div className="text-[10px] text-slate-400">{currentUser.department || 'Account'}</div>
               </div>
-              <ChevronDown className="w-3.5 h-3.5 text-slate-400" />
+              <ChevronDown className="w-3.5 h-3.5 text-[#777b86]" />
             </button>
 
             {roleDropdownOpen && (
@@ -134,13 +130,13 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenVerificationGuide, onOpenA
                   className="fixed inset-0 z-30"
                   onClick={() => setRoleDropdownOpen(false)}
                 />
-                <div className="absolute right-0 mt-2 w-72 bg-slate-900 rounded-2xl shadow-2xl border border-slate-800 py-2 z-40 animate-in fade-in-50 zoom-in-95 duration-150">
-                  <div className="px-3 py-2 border-b border-slate-800">
-                    <p className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">
-                      Switch Role (RBAC Simulation)
+                <div className="absolute right-0 mt-2 w-72 bg-[#ffffff] rounded-[24px] shadow-[0_0_0_1px_rgba(4,23,43,0.05),0_20px_25px_-5px_rgba(0,0,0,0.08),0_8px_10px_-6px_rgba(0,0,0,0.06)] border border-[#ececec] p-2.5 z-40">
+                  <div className="px-3 py-2 border-b border-[#f2f2f3]">
+                    <p className="text-[11px] font-medium text-[#979799] uppercase tracking-wider">
+                      Role-Based Access
                     </p>
-                    <p className="text-xs text-slate-400 mt-0.5">
-                      Change perspective to test admin vs staff vs customer experience.
+                    <p className="text-xs text-[#777b86] mt-0.5">
+                      Switch perspective to test Admin, Staff, or Customer view.
                     </p>
                   </div>
 
@@ -152,25 +148,25 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenVerificationGuide, onOpenA
                           switchRole(item.role);
                           setRoleDropdownOpen(false);
                         }}
-                        className={`w-full flex items-start gap-2.5 p-2 rounded-xl text-left transition ${
+                        className={`w-full flex items-start gap-2.5 p-2 rounded-[16px] text-left transition ${
                           currentUser.role === item.role
-                            ? 'bg-purple-950/70 border border-purple-800/60 text-purple-200 font-semibold'
-                            : 'hover:bg-slate-800 text-slate-300'
+                            ? 'bg-[#f2f2f3] text-[#17191c] font-medium'
+                            : 'hover:bg-[#fafafb] text-[#777b86]'
                         }`}
                       >
-                        <div className="p-1 bg-slate-800 rounded-lg border border-slate-700 shrink-0 mt-0.5">
+                        <div className="p-1.5 bg-[#ffffff] rounded-full border border-[#ececec] shrink-0 mt-0.5">
                           {item.icon}
                         </div>
                         <div className="min-w-0">
-                          <div className="text-xs font-bold leading-tight flex items-center justify-between">
+                          <div className="text-xs font-medium text-[#17191c] leading-tight flex items-center justify-between">
                             <span>{item.label}</span>
                             {currentUser.role === item.role && (
-                              <span className="text-[10px] bg-purple-600 text-white px-1.5 rounded-full font-bold">
+                              <span className="text-[10px] bg-[#17191c] text-[#ffffff] px-2 py-0.5 rounded-full font-medium">
                                 Active
                               </span>
                             )}
                           </div>
-                          <div className="text-[11px] text-slate-400 leading-snug mt-0.5 line-clamp-2">
+                          <div className="text-[11px] text-[#777b86] leading-snug mt-0.5 line-clamp-2">
                             {item.desc}
                           </div>
                         </div>

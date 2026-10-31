@@ -118,37 +118,37 @@ export const VerificationGuide: React.FC<VerificationGuideProps> = ({
   ];
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-end bg-slate-950/80 backdrop-blur-sm animate-in fade-in">
-      <div className="bg-slate-900 h-full w-full max-w-2xl shadow-2xl flex flex-col border-l border-slate-800 animate-in slide-in-from-right duration-300 text-slate-100">
+    <div className="fixed inset-0 z-50 flex items-center justify-end bg-[#17191c]/40 backdrop-blur-sm animate-in fade-in">
+      <div className="bg-[#ffffff] h-full w-full max-w-2xl shadow-[0_0_50px_rgba(0,0,0,0.15)] flex flex-col border-l border-[#ececec] animate-in slide-in-from-right duration-300 text-[#17191c]">
         {/* Header */}
-        <div className="p-6 border-b border-slate-800 flex items-center justify-between bg-slate-950/80">
+        <div className="p-6 border-b border-[#ececec] flex items-center justify-between bg-[#ffffff]">
           <div className="flex items-center gap-3">
-            <div className="p-2 bg-purple-950/80 border border-purple-800/60 text-purple-400 rounded-xl">
+            <div className="p-2 bg-[#f2f2f3] text-[#17191c] rounded-full">
               <BookOpen className="w-5 h-5" />
             </div>
             <div>
-              <h2 className="text-lg font-bold text-white">Project Verification & Learning Guide</h2>
-              <p className="text-xs text-slate-400">
-                Interactive companion for the Odoo Subscription Management challenge
+              <h2 className="font-serif text-xl font-normal text-[#17191c]">Project Verification & Guide</h2>
+              <p className="text-xs text-[#777b86]">
+                Interactive walkthrough for the Odoo Subscription Management system
               </p>
             </div>
           </div>
           <button
             onClick={onClose}
-            className="p-2 text-slate-400 hover:text-white rounded-xl hover:bg-slate-800 transition"
+            className="p-2 text-[#777b86] hover:text-[#17191c] rounded-full hover:bg-[#f2f2f3] transition"
           >
             <X className="w-5 h-5" />
           </button>
         </div>
 
         {/* Tab selection */}
-        <div className="flex border-b border-slate-800 px-6 bg-slate-900 gap-6">
+        <div className="flex border-b border-[#ececec] px-6 bg-[#fafafb] gap-6">
           <button
             onClick={() => setActiveTab('scenes')}
-            className={`py-3 text-sm font-semibold border-b-2 transition flex items-center gap-2 ${
+            className={`py-3 text-xs font-medium border-b-2 transition flex items-center gap-2 ${
               activeTab === 'scenes'
-                ? 'border-purple-500 text-purple-400 font-bold'
-                : 'border-transparent text-slate-400 hover:text-slate-200'
+                ? 'border-[#17191c] text-[#17191c]'
+                : 'border-transparent text-[#777b86] hover:text-[#17191c]'
             }`}
           >
             <Sparkles className="w-4 h-4" />
@@ -156,14 +156,14 @@ export const VerificationGuide: React.FC<VerificationGuideProps> = ({
           </button>
           <button
             onClick={() => setActiveTab('learning')}
-            className={`py-3 text-sm font-semibold border-b-2 transition flex items-center gap-2 ${
+            className={`py-3 text-xs font-medium border-b-2 transition flex items-center gap-2 ${
               activeTab === 'learning'
-                ? 'border-purple-500 text-purple-400 font-bold'
-                : 'border-transparent text-slate-400 hover:text-slate-200'
+                ? 'border-[#17191c] text-[#17191c]'
+                : 'border-transparent text-[#777b86] hover:text-[#17191c]'
             }`}
           >
             <HelpCircle className="w-4 h-4" />
-            <span>Web Dev Concepts & Interview Q&A</span>
+            <span>Web Dev Concepts & Architecture</span>
           </button>
         </div>
 
@@ -171,16 +171,16 @@ export const VerificationGuide: React.FC<VerificationGuideProps> = ({
         <div className="flex-1 overflow-y-auto p-6 space-y-6">
           {activeTab === 'scenes' && (
             <div className="space-y-4">
-              <div className="p-4 bg-purple-950/40 border border-purple-800/60 rounded-2xl flex items-center justify-between">
+              <div className="p-4 bg-[#fafafb] border border-[#ececec] rounded-[18px] flex items-center justify-between">
                 <div>
-                  <div className="text-xs font-bold text-purple-300">Brightloop Software Scenario Testing</div>
-                  <div className="text-xs text-purple-200/80 mt-0.5">
-                    Click any action button below to jump straight to that feature with appropriate demo state.
+                  <div className="text-xs font-medium text-[#17191c]">Scenario Testing Suite</div>
+                  <div className="text-xs text-[#777b86] mt-0.5">
+                    Click any action button below to jump straight to that feature with demo state.
                   </div>
                 </div>
                 <button
                   onClick={resetToDemoData}
-                  className="px-3 py-1.5 bg-slate-800 border border-slate-700 text-purple-300 text-xs font-semibold rounded-lg hover:bg-slate-700 flex items-center gap-1.5 transition shrink-0"
+                  className="px-3.5 py-1.5 bg-[#ffffff] border border-[#ececec] text-[#17191c] text-xs font-medium rounded-full hover:bg-[#f2f2f3] flex items-center gap-1.5 transition shrink-0 shadow-2xs"
                 >
                   <RefreshCw className="w-3.5 h-3.5" />
                   Reset Demo
@@ -190,29 +190,29 @@ export const VerificationGuide: React.FC<VerificationGuideProps> = ({
               {scenes.map((scene) => (
                 <div
                   key={scene.num}
-                  className="p-5 rounded-2xl border border-slate-800 hover:border-purple-500/50 hover:shadow-lg transition bg-slate-950/60 space-y-3"
+                  className="p-5 rounded-[20px] border border-[#ececec] hover:border-[#17191c] transition bg-[#ffffff] space-y-3 shadow-2xs"
                 >
                   <div className="flex items-start justify-between gap-4">
                     <div className="flex items-center gap-2.5">
-                      <span className="w-6 h-6 rounded-full bg-purple-600 text-white font-bold text-xs flex items-center justify-center shrink-0">
+                      <span className="w-6 h-6 rounded-full bg-[#17191c] text-[#ffffff] font-medium text-xs flex items-center justify-center shrink-0">
                         {scene.num}
                       </span>
-                      <h3 className="font-bold text-white text-sm">{scene.title}</h3>
+                      <h3 className="font-serif text-sm font-normal text-[#17191c]">{scene.title}</h3>
                     </div>
                     <button
                       onClick={scene.action}
-                      className="px-3 py-1.5 bg-purple-950/80 text-purple-300 hover:bg-purple-600 hover:text-white transition rounded-xl text-xs font-semibold flex items-center gap-1 border border-purple-800/60 shrink-0"
+                      className="px-3.5 py-1.5 bg-[#17191c] text-[#ffffff] hover:bg-black transition rounded-full text-xs font-medium flex items-center gap-1 shrink-0 shadow-2xs"
                     >
                       <span>{scene.actionLabel}</span>
                       <ChevronRight className="w-3.5 h-3.5" />
                     </button>
                   </div>
 
-                  <p className="text-xs text-slate-300 leading-relaxed pl-8.5">{scene.desc}</p>
+                  <p className="text-xs text-[#777b86] leading-relaxed pl-8.5">{scene.desc}</p>
 
-                  <div className="ml-8.5 p-2.5 bg-slate-900 rounded-xl border border-slate-800 text-[11px] text-slate-400 flex items-start gap-2">
-                    <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
-                    <span><strong>Verification Tip:</strong> {scene.roleCheck}</span>
+                  <div className="ml-8.5 p-3 bg-[#fafafb] rounded-[14px] border border-[#ececec] text-[11px] text-[#777b86] flex items-start gap-2">
+                    <CheckCircle2 className="w-4 h-4 text-[#17191c] shrink-0 mt-0.5" />
+                    <span><strong className="text-[#17191c]">Verification Tip:</strong> {scene.roleCheck}</span>
                   </div>
                 </div>
               ))}
@@ -220,91 +220,91 @@ export const VerificationGuide: React.FC<VerificationGuideProps> = ({
           )}
 
           {activeTab === 'learning' && (
-            <div className="space-y-5 text-sm text-slate-300">
-              <div className="p-4 bg-indigo-950/40 border border-indigo-800/60 rounded-2xl text-xs text-indigo-300 leading-relaxed">
-                <strong>Why this architecture?</strong> As a beginner to web development, this guide explains how the pieces fit together so you can confidently answer questions during evaluation.
+            <div className="space-y-5 text-sm text-[#777b86]">
+              <div className="p-4 bg-[#fafafb] border border-[#ececec] rounded-[18px] text-xs text-[#777b86] leading-relaxed">
+                <strong className="text-[#17191c]">Why this architecture?</strong> This guide explains how the system is engineered so you can evaluate and discuss design and technical decisions.
               </div>
 
               {/* Concept 1 */}
-              <div className="border border-slate-800 rounded-2xl p-4 bg-slate-950/60 space-y-2">
-                <h4 className="font-bold text-white flex items-center gap-2 text-sm">
-                  <span className="w-5 h-5 rounded-md bg-blue-950 text-blue-400 border border-blue-800/60 flex items-center justify-center text-xs">1</span>
+              <div className="border border-[#ececec] rounded-[20px] p-5 bg-[#ffffff] space-y-2.5 shadow-2xs">
+                <h4 className="font-serif text-sm font-normal text-[#17191c] flex items-center gap-2">
+                  <span className="w-5 h-5 rounded-full bg-[#f2f2f3] text-[#17191c] flex items-center justify-center text-xs font-medium">1</span>
                   What is Frontend Web Development?
                 </h4>
-                <p className="text-xs text-slate-300 leading-relaxed">
-                  Frontend is everything the user sees, clicks, and interacts with in their web browser. It transforms raw data into an intuitive, responsive graphical user interface (GUI).
+                <p className="text-xs text-[#777b86] leading-relaxed">
+                  Frontend is everything the user sees, clicks, and interacts with in their web browser. It transforms raw business logic into an intuitive, responsive graphical user interface.
                 </p>
-                <div className="text-[11px] bg-slate-900 p-2.5 rounded-lg border border-slate-800 text-slate-400">
-                  <strong>The 3 Core Pillars:</strong>
+                <div className="text-[11px] bg-[#fafafb] p-3 rounded-[14px] border border-[#ececec] text-[#777b86]">
+                  <strong className="text-[#17191c]">The 3 Core Pillars:</strong>
                   <ul className="list-disc list-inside mt-1 space-y-0.5">
-                    <li><strong>HTML5:</strong> Defines structure (buttons, tables, headings).</li>
-                    <li><strong>Tailwind CSS v4:</strong> Controls visual presentation (colors, dark mode tokens, spacing, typography).</li>
-                    <li><strong>TypeScript / React:</strong> Controls interactivity, calculations, state, and business rules.</li>
+                    <li><strong className="text-[#17191c]">HTML5:</strong> Defines structure (buttons, tables, headings).</li>
+                    <li><strong className="text-[#17191c]">Tailwind CSS v4:</strong> Controls visual presentation (editorial tokens, spacing, typography).</li>
+                    <li><strong className="text-[#17191c]">TypeScript / React:</strong> Controls interactivity, calculations, state, and business rules.</li>
                   </ul>
                 </div>
               </div>
 
               {/* Concept 2 */}
-              <div className="border border-slate-800 rounded-2xl p-4 bg-slate-950/60 space-y-2">
-                <h4 className="font-bold text-white flex items-center gap-2 text-sm">
-                  <span className="w-5 h-5 rounded-md bg-purple-950 text-purple-400 border border-purple-800/60 flex items-center justify-center text-xs">2</span>
+              <div className="border border-[#ececec] rounded-[20px] p-5 bg-[#ffffff] space-y-2.5 shadow-2xs">
+                <h4 className="font-serif text-sm font-normal text-[#17191c] flex items-center gap-2">
+                  <span className="w-5 h-5 rounded-full bg-[#f2f2f3] text-[#17191c] flex items-center justify-center text-xs font-medium">2</span>
                   Why React + Vite instead of plain HTML/JS?
                 </h4>
-                <p className="text-xs text-slate-300 leading-relaxed">
-                  <strong>React</strong> uses a component-based model. Instead of copying and pasting code, we write reusable components. When state changes, React updates only that specific DOM element instantly without reloading the page.
+                <p className="text-xs text-[#777b86] leading-relaxed">
+                  <strong className="text-[#17191c]">React</strong> uses a component-based model. Instead of copying and pasting code, we write reusable components. When state changes, React updates only that specific DOM element instantly without reloading the page.
                 </p>
-                <p className="text-xs text-slate-300 leading-relaxed">
-                  <strong>Vite</strong> is the modern build tool powering instant hot-module reloading (HMR) and sub-second builds.
+                <p className="text-xs text-[#777b86] leading-relaxed">
+                  <strong className="text-[#17191c]">Vite</strong> is the modern build tool powering instant hot-module reloading (HMR) and sub-second builds.
                 </p>
               </div>
 
               {/* Concept 3 */}
-              <div className="border border-slate-800 rounded-2xl p-4 bg-slate-950/60 space-y-2">
-                <h4 className="font-bold text-white flex items-center gap-2 text-sm">
-                  <span className="w-5 h-5 rounded-md bg-emerald-950 text-emerald-400 border border-emerald-800/60 flex items-center justify-center text-xs">3</span>
+              <div className="border border-[#ececec] rounded-[20px] p-5 bg-[#ffffff] space-y-2.5 shadow-2xs">
+                <h4 className="font-serif text-sm font-normal text-[#17191c] flex items-center gap-2">
+                  <span className="w-5 h-5 rounded-full bg-[#f2f2f3] text-[#17191c] flex items-center justify-center text-xs font-medium">3</span>
                   How is State Managed? (The AppContext)
                 </h4>
-                <p className="text-xs text-slate-300 leading-relaxed">
-                  State is the living memory of our application. We use <strong>React Context API</strong> (<code>AppContext.tsx</code>). Any page or modal can read or mutate the active subscriptions, invoices, or logged-in user without prop-drilling.
+                <p className="text-xs text-[#777b86] leading-relaxed">
+                  State is the living memory of our application. We use <strong className="text-[#17191c]">React Context API</strong> (<code>AppContext.tsx</code>). Any page or modal can read or mutate the active subscriptions, invoices, or logged-in user without prop-drilling.
                 </p>
-                <p className="text-xs text-slate-300 leading-relaxed">
+                <p className="text-xs text-[#777b86] leading-relaxed">
                   We also persist state to browser <code>localStorage</code>, so your created products, status changes, and recorded payments stay intact even on page refresh.
                 </p>
               </div>
 
               {/* Concept 4 */}
-              <div className="border border-slate-800 rounded-2xl p-4 bg-slate-950/60 space-y-2">
-                <h4 className="font-bold text-white flex items-center gap-2 text-sm">
-                  <span className="w-5 h-5 rounded-md bg-amber-950 text-amber-400 border border-amber-800/60 flex items-center justify-center text-xs">4</span>
+              <div className="border border-[#ececec] rounded-[20px] p-5 bg-[#ffffff] space-y-2.5 shadow-2xs">
+                <h4 className="font-serif text-sm font-normal text-[#17191c] flex items-center gap-2">
+                  <span className="w-5 h-5 rounded-full bg-[#f2f2f3] text-[#17191c] flex items-center justify-center text-xs font-medium">4</span>
                   How is Role-Based Access Control (RBAC) enforced?
                 </h4>
-                <p className="text-xs text-slate-300 leading-relaxed">
+                <p className="text-xs text-[#777b86] leading-relaxed">
                   We check the active role (<code>admin</code>, <code>staff</code>, or <code>customer</code>) to conditionally render views and disable unauthorized actions:
                 </p>
-                <ul className="text-xs text-slate-400 list-disc list-inside space-y-1">
-                  <li><strong>Admin:</strong> Can add staff, configure plans, set tax and discount rules.</li>
-                  <li><strong>Staff:</strong> Can prepare quotes, convert them to subscriptions, run billing day, record payments.</li>
-                  <li><strong>Customer:</strong> Scoped strictly to records matching their <code>customerId</code> (portal self-service).</li>
+                <ul className="text-xs text-[#777b86] list-disc list-inside space-y-1">
+                  <li><strong className="text-[#17191c]">Admin:</strong> Can add staff, configure plans, set tax and discount rules.</li>
+                  <li><strong className="text-[#17191c]">Staff:</strong> Can prepare quotes, convert them to subscriptions, run billing day, record payments.</li>
+                  <li><strong className="text-[#17191c]">Customer:</strong> Scoped strictly to records matching their <code>customerId</code> (portal self-service).</li>
                 </ul>
               </div>
 
               {/* Concept 5 */}
-              <div className="border border-slate-800 rounded-2xl p-4 bg-slate-950/60 space-y-2">
-                <h4 className="font-bold text-white flex items-center gap-2 text-sm">
-                  <span className="w-5 h-5 rounded-md bg-rose-950 text-rose-400 border border-rose-800/60 flex items-center justify-center text-xs">5</span>
+              <div className="border border-[#ececec] rounded-[20px] p-5 bg-[#ffffff] space-y-2.5 shadow-2xs">
+                <h4 className="font-serif text-sm font-normal text-[#17191c] flex items-center gap-2">
+                  <span className="w-5 h-5 rounded-full bg-[#f2f2f3] text-[#17191c] flex items-center justify-center text-xs font-medium">5</span>
                   Questions You Might Be Asked & How to Answer
                 </h4>
                 <div className="space-y-2 text-xs">
-                  <div className="p-2.5 bg-slate-900 rounded-xl border border-slate-800">
-                    <span className="font-bold text-white">Q: "How do you ensure invoices aren't billed twice?"</span>
-                    <p className="text-slate-400 mt-0.5">
-                      <strong>Answer:</strong> The billing engine compares each active subscription's <code>nextBillingDate</code> with today's date. When an invoice is generated, the <code>lastBilledDate</code> is stamped and <code>nextBillingDate</code> is advanced to the next period.
+                  <div className="p-3 bg-[#fafafb] rounded-[14px] border border-[#ececec]">
+                    <span className="font-medium text-[#17191c]">Q: "How do you ensure invoices aren't billed twice?"</span>
+                    <p className="text-[#777b86] mt-0.5 leading-relaxed">
+                      <strong className="text-[#17191c]">Answer:</strong> The billing engine compares each active subscription's <code>nextBillingDate</code> with today's date. When an invoice is generated, the <code>lastBilledDate</code> is stamped and <code>nextBillingDate</code> is advanced to the next period.
                     </p>
                   </div>
-                  <div className="p-2.5 bg-slate-900 rounded-xl border border-slate-800">
-                    <span className="font-bold text-white">Q: "How are discounts and taxes calculated?"</span>
-                    <p className="text-slate-400 mt-0.5">
-                      <strong>Answer:</strong> Line items add base price + variant delta. The tax rule computes tax percentage (10% standard). Discount rules validate minimum seat quantity / amount and apply either a percentage or fixed amount before calculating the final invoice total.
+                  <div className="p-3 bg-[#fafafb] rounded-[14px] border border-[#ececec]">
+                    <span className="font-medium text-[#17191c]">Q: "How are discounts and taxes calculated?"</span>
+                    <p className="text-[#777b86] mt-0.5 leading-relaxed">
+                      <strong className="text-[#17191c]">Answer:</strong> Line items add base price + variant delta. The tax rule computes tax percentage (10% standard). Discount rules validate minimum seat quantity / amount and apply either a percentage or fixed amount before calculating the final invoice total.
                     </p>
                   </div>
                 </div>

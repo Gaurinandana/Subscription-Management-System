@@ -1,4 +1,4 @@
-# Frontend - Node / React / Vite
+# Frontend
 node_modules/
 dist/
 dist-ssr/
@@ -6,15 +6,14 @@ dist-ssr/
 *.tsbuildinfo
 
 # Logs
-logs
+logs/
 *.log
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
-lerna-debug.log*
 
-# Python Backend
+# Python backend
 venv/
 .venv/
 __pycache__/
@@ -22,18 +21,12 @@ __pycache__/
 instance/*.db
 .pytest_cache/
 
-# Environment variables
+# Environment
 .env
 .env.*
 !.env.example
 
-# Editor directories and files
-.vscode/*
-!.vscode/extensions.json
+# Editors
+.vscode/
 .idea/
 .DS_Store
-*.suo
-*.ntvs*
-*.njsproj
-*.sln
-*.sw?

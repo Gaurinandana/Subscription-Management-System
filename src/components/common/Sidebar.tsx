@@ -33,32 +33,32 @@ export const Sidebar: React.FC<SidebarProps> = ({
   const internalNav = [
     {
       id: 'dashboard',
-      label: 'Finance Lead Metrics',
-      icon: <LayoutDashboard className="w-4 h-4" />,
+      label: 'Financial Health',
+      icon: <LayoutDashboard className="w-4 h-4 shrink-0" />,
       badge: 'Scene 7',
     },
     {
       id: 'subscriptions',
-      label: 'Subscriptions Lifecycle',
-      icon: <Repeat className="w-4 h-4" />,
+      label: 'Subscriptions',
+      icon: <Repeat className="w-4 h-4 shrink-0" />,
       badge: 'Scene 3',
     },
     {
       id: 'quotes',
       label: 'Quote Builder',
-      icon: <FileSpreadsheet className="w-4 h-4" />,
+      icon: <FileSpreadsheet className="w-4 h-4 shrink-0" />,
       badge: 'Scene 3',
     },
     {
       id: 'invoices',
-      label: 'Billing Day & Invoices',
-      icon: <Receipt className="w-4 h-4" />,
+      label: 'Billing & Invoices',
+      icon: <Receipt className="w-4 h-4 shrink-0" />,
       badge: 'Scene 4 & 6',
     },
     {
       id: 'products',
-      label: 'Products, Plans & Variants',
-      icon: <Package className="w-4 h-4" />,
+      label: 'Products & Plans',
+      icon: <Package className="w-4 h-4 shrink-0" />,
       badge: 'Scene 2',
     },
     ...(isAdmin
@@ -66,42 +66,42 @@ export const Sidebar: React.FC<SidebarProps> = ({
           {
             id: 'discounts',
             label: 'Discounts & Taxes',
-            icon: <Percent className="w-4 h-4" />,
-            badge: 'Scene 4 & 5',
+            icon: <Percent className="w-4 h-4 shrink-0" />,
+            badge: 'Scene 5',
           },
           {
             id: 'staff',
-            label: 'Staff Management',
-            icon: <Users className="w-4 h-4" />,
+            label: 'Staff Directory',
+            icon: <Users className="w-4 h-4 shrink-0" />,
             badge: 'Scene 1',
           },
         ]
       : []),
     {
       id: 'portal',
-      label: 'Customer Portal (Preview)',
-      icon: <Compass className="w-4 h-4" />,
-      badge: 'Scene 1',
+      label: 'Customer Portal',
+      icon: <Compass className="w-4 h-4 shrink-0" />,
+      badge: 'Preview',
     },
   ];
 
   const customerNav = [
     {
       id: 'portal',
-      label: 'My Subscriptions & Invoices',
-      icon: <Compass className="w-4 h-4" />,
-      badge: 'Self-Service',
+      label: 'My Subscriptions',
+      icon: <Compass className="w-4 h-4 shrink-0" />,
+      badge: 'Portal',
     },
   ];
 
   const navItems = isCustomer ? customerNav : internalNav;
 
   return (
-    <aside className="w-64 border-r border-slate-800 bg-slate-900/60 backdrop-blur-md flex flex-col shrink-0 min-h-[calc(100vh-61px)]">
+    <aside className="w-64 xl:w-72 border-r border-[#ececec] bg-[#fafafb] flex flex-col shrink-0 min-h-[calc(100vh-65px)]">
       <div className="p-4 flex-1 space-y-6">
         <div>
-          <div className="px-3 mb-2 text-[10px] font-extrabold uppercase tracking-wider text-slate-500">
-            {isCustomer ? 'Customer Access' : 'Business Operations'}
+          <div className="px-3 mb-2 font-mono text-[10px] uppercase tracking-wider text-[#979799]">
+            {isCustomer ? 'Customer Portal' : 'Business Operations'}
           </div>
 
           <nav className="space-y-1">
@@ -111,22 +111,22 @@ export const Sidebar: React.FC<SidebarProps> = ({
                 <button
                   key={item.id}
                   onClick={() => onSelectTab(item.id)}
-                  className={`w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-semibold transition ${
+                  className={`w-full flex items-center justify-between px-3.5 py-2 rounded-full text-xs transition ${
                     active
-                      ? 'bg-purple-600 text-white shadow-sm shadow-purple-600/30 font-bold'
-                      : 'text-slate-400 hover:text-white hover:bg-slate-800/80'
+                      ? 'bg-[#17191c] text-[#ffffff] font-medium'
+                      : 'text-[#777b86] hover:text-[#17191c] hover:bg-[#f2f2f3] font-normal'
                   }`}
                 >
-                  <div className="flex items-center gap-3">
-                    <span className={active ? 'text-white' : 'text-slate-400'}>{item.icon}</span>
-                    <span>{item.label}</span>
+                  <div className="flex items-center gap-2.5 truncate">
+                    <span className={active ? 'text-[#ffffff]' : 'text-[#777b86]'}>{item.icon}</span>
+                    <span className="truncate">{item.label}</span>
                   </div>
                   {item.badge && (
                     <span
-                      className={`text-[9px] font-bold px-1.5 py-0.5 rounded-full ${
+                      className={`text-[10px] font-mono shrink-0 px-2 py-0.5 rounded-full ml-1.5 ${
                         active
-                          ? 'bg-purple-500 text-purple-100'
-                          : 'bg-slate-800 text-slate-400 border border-slate-700/80'
+                          ? 'bg-[#ffffff]/20 text-[#ffffff]'
+                          : 'text-[#979799]'
                       }`}
                     >
                       {item.badge}
@@ -138,22 +138,22 @@ export const Sidebar: React.FC<SidebarProps> = ({
           </nav>
         </div>
 
-        {/* Quick RBAC indicator card */}
-        <div className="p-3.5 bg-gradient-to-br from-purple-950/40 to-indigo-950/40 rounded-2xl border border-purple-800/50 space-y-2">
-          <div className="flex items-center gap-2 text-xs font-bold text-purple-300">
-            <Sparkles className="w-4 h-4 text-purple-400" />
-            <span>Brightloop Software</span>
+        {/* Neutral card for RBAC simulation status */}
+        <div className="p-4 bg-[#f2f2f3] rounded-[24px] space-y-2">
+          <div className="flex items-center gap-2 text-xs font-medium text-[#17191c]">
+            <Sparkles className="w-3.5 h-3.5 text-[#17191c]" />
+            <span>Brightloop System</span>
           </div>
-          <p className="text-[11px] text-purple-200/80 leading-relaxed">
-            You are logged in as{' '}
-            <strong className="text-white uppercase">{currentUser.role}</strong>.
-            {currentUser.role === 'admin' && ' You have full permissions over plans, rules, and staff.'}
-            {currentUser.role === 'staff' && ' You can manage quotes, run billing day, and register payments.'}
-            {currentUser.role === 'customer' && ' You can self-service manage your subscriptions and invoices.'}
+          <p className="text-[12px] text-[#777b86] leading-relaxed">
+            Logged in as{' '}
+            <strong className="text-[#17191c] font-medium uppercase">{currentUser.role}</strong>.
+            {currentUser.role === 'admin' && ' Full privileges for products, plans, discount rules, and staff.'}
+            {currentUser.role === 'staff' && ' Access to quote building, batch billing day, and payment recording.'}
+            {currentUser.role === 'customer' && ' Self-service portal scoped to your active subscriptions and invoices.'}
           </p>
           <button
             onClick={onOpenVerificationGuide}
-            className="w-full mt-1 py-1.5 bg-slate-800 hover:bg-slate-700 border border-slate-700 rounded-xl text-[11px] font-bold text-purple-300 transition flex items-center justify-center gap-1 shadow-2xs"
+            className="w-full mt-2 py-1.5 border border-[#17191c] rounded-full text-[11px] font-medium text-[#17191c] hover:bg-[#ffffff] transition flex items-center justify-center gap-1.5"
           >
             <span>Open PDF Checklist</span>
             <ExternalLink className="w-3 h-3" />
@@ -161,8 +161,8 @@ export const Sidebar: React.FC<SidebarProps> = ({
         </div>
       </div>
 
-      <div className="p-4 border-t border-slate-800 text-center text-[11px] text-slate-500">
-        Brightloop v1.0 • Odoo Challenge
+      <div className="p-4 border-t border-[#ececec] text-center text-[11px] text-[#979799]">
+        Brightloop Software • Odoo Challenge
       </div>
     </aside>
   );
