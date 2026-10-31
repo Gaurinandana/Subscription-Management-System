@@ -10,10 +10,13 @@ def create_app():
 
     app = Flask(__name__)
 
+    # Load configuration
     app.config.from_object(Config)
 
+    # Create instance folder
     os.makedirs(app.instance_path, exist_ok=True)
 
+    # Initialize database
     db.init_app(app)
 
     # Import all database models
@@ -32,16 +35,33 @@ def create_app():
         Quotation
     )
 
-    # Register authentication routes
+    # ==========================================
+    # REGISTER AUTHENTICATION ROUTES
+    # ==========================================
+
     from routes.auth import auth_bp
 
     app.register_blueprint(auth_bp)
 
-    # Create database tables
+    # ==========================================
+    # REGISTER PRODUCT ROUTES
+    # ==========================================
+
+    from routes.products import products_bp
+
+    app.register_blueprint(products_bp)
+
+    # ==========================================
+    # CREATE DATABASE TABLES
+    # ==========================================
+
     with app.app_context():
         db.create_all()
 
-    # Home route
+    # ==========================================
+    # HOME ROUTE
+    # ==========================================
+
     @app.route("/")
     def home():
 
@@ -51,7 +71,10 @@ def create_app():
             "database": "Connected"
         }
 
-    # API health check
+    # ==========================================
+    # API HEALTH CHECK
+    # ==========================================
+
     @app.route("/api/health")
     def health():
 
@@ -62,6 +85,10 @@ def create_app():
 
     return app
 
+
+# ==========================================
+# RUN APPLICATION
+# ==========================================
 
 if __name__ == "__main__":
 
