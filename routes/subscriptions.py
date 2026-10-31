@@ -15,6 +15,11 @@ from models import (
     Subscription,
     SubscriptionLine
 )
+from services.subscription_service import (
+    process_subscription_automation,
+    calculate_next_billing_date
+)
+
 
 subscriptions_bp = Blueprint(
     "subscriptions",
@@ -89,6 +94,7 @@ def create_subscription():
         }), 400
 
     customer = db.session.get(User, customer_id)
+
     if not customer:
         return jsonify({
             "success": False,
@@ -102,6 +108,7 @@ def create_subscription():
         }), 400
 
     plan = db.session.get(Plan, plan_id)
+
     if not plan or not plan.is_active:
         return jsonify({
             "success": False,
@@ -113,10 +120,12 @@ def create_subscription():
             data.get("start_date"),
             "start_date"
         )
+
         expiry_date = parse_date(
             data.get("expiry_date"),
             "expiry_date"
         )
+
         next_billing_date = parse_date(
             data.get("next_billing_date"),
             "next_billing_date"
@@ -139,15 +148,42 @@ def create_subscription():
                 "payment_terms_days cannot be negative"
             )
 
+        requested_status = data.get("status", "draft")
+
+        allowed_statuses = [
+            "draft",
+            "active",
+            "paused",
+            "cancelled",
+            "expired"
+        ]
+
+        if requested_status not in allowed_statuses:
+            raise ValueError("Invalid subscription status")
+
+        if requested_status == "paused" and not plan.allow_pause:
+            raise ValueError(
+                "This plan does not allow pausing"
+            )
+
+        if requested_status == "active" and not next_billing_date:
+            next_billing_date = calculate_next_billing_date(
+                start_date,
+                plan.billing_interval
+            )
+
         subscription = Subscription(
-            subscription_number=f"SUB-{datetime.now():%Y%m%d}-{uuid4().hex[:8].upper()}",
+            subscription_number=(
+                f"SUB-{datetime.now():%Y%m%d}-"
+                f"{uuid4().hex[:8].upper()}"
+            ),
             customer_id=customer.id,
             plan_id=plan.id,
             start_date=start_date,
             expiry_date=expiry_date,
             next_billing_date=next_billing_date,
             payment_terms_days=payment_terms_days,
-            status="draft"
+            status=requested_status
         )
 
         db.session.add(subscription)
@@ -216,6 +252,7 @@ def create_subscription():
 
     except (ValueError, TypeError, InvalidOperation) as error:
         db.session.rollback()
+
         return jsonify({
             "success": False,
             "message": str(error)
@@ -223,6 +260,7 @@ def create_subscription():
 
     except IntegrityError:
         db.session.rollback()
+
         return jsonify({
             "success": False,
             "message": "Could not create subscription due to a database conflict"
@@ -281,6 +319,8 @@ def update_subscription(subscription_id):
     data = request.get_json(silent=True) or {}
 
     try:
+        plan = db.session.get(Plan, subscription.plan_id)
+
         if "status" in data:
             allowed_statuses = [
                 "draft",
@@ -291,11 +331,26 @@ def update_subscription(subscription_id):
             ]
 
             if data["status"] not in allowed_statuses:
+                raise ValueError("Invalid subscription status")
+
+            if data["status"] == "paused" and plan and not plan.allow_pause:
                 raise ValueError(
-                    "Invalid subscription status"
+                    "This plan does not allow pausing"
                 )
 
             subscription.status = data["status"]
+
+            if (
+                data["status"] == "active"
+                and not subscription.next_billing_date
+                and plan
+            ):
+                subscription.next_billing_date = (
+                    calculate_next_billing_date(
+                        subscription.start_date,
+                        plan.billing_interval
+                    )
+                )
 
         if "start_date" in data:
             subscription.start_date = parse_date(
@@ -342,7 +397,28 @@ def update_subscription(subscription_id):
 
     except (ValueError, TypeError) as error:
         db.session.rollback()
+
         return jsonify({
             "success": False,
             "message": str(error)
         }), 400
+
+
+@subscriptions_bp.route("/automation/run", methods=["POST"])
+def run_subscription_automation():
+    try:
+        result = process_subscription_automation()
+
+        return jsonify({
+            "success": True,
+            "message": "Subscription automation completed successfully",
+            "result": result
+        }), 200
+
+    except Exception as error:
+        db.session.rollback()
+
+        return jsonify({
+            "success": False,
+            "message": str(error)
+        }), 500

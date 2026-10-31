@@ -64,6 +64,9 @@ def create_app():
     from routes.quotations import quotations_bp
     app.register_blueprint(quotations_bp)
 
+    from routes.customers import customers_bp
+    app.register_blueprint(customers_bp)
+
     # Create database tables
     with app.app_context():
         db.create_all()
