@@ -42,9 +42,12 @@ def create_app():
     # Register plan routes
     from routes.plans import plans_bp
     app.register_blueprint(plans_bp)
-    
+
     from routes.subscriptions import subscriptions_bp
     app.register_blueprint(subscriptions_bp)
+
+    from routes.invoices import invoices_bp
+    app.register_blueprint(invoices_bp)
 
 
     # Create database tables
