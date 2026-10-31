@@ -1,346 +1,266 @@
 import React, { useState } from 'react';
-import { useApp } from '../context/AppContext';
-import { SubscriptionLine } from '../types';
-import {
-  FileSpreadsheet,
-  Plus,
-  Trash2,
-  CheckCircle2,
-  Tag,
-  Calendar,
-  Building,
-  CreditCard,
-  Percent,
-  Sparkles,
-  ArrowRight,
+import { 
+  FileSpreadsheet, Plus, Trash2, CheckCircle2, 
+  ArrowRight, Tag 
 } from 'lucide-react';
+import { useApp } from '../context/AppContext';
+type PaymentTerms = 'Net 30' | 'Due on Receipt' | 'Net 15' | 'Net 60';
 
 interface QuoteBuilderProps {
-  onNavigate: (view: string) => void;
+  onNavigate?: (tab: string) => void;
+}
+
+interface QuoteLine {
+  id: string;
+  productId: string;
+  productName: string;
+  quantity: number;
+  unitPrice: number;
+  variantPrice: number;
+  variantName: string;
+  taxRate: number;
+  amount: number;
 }
 
 export const QuoteBuilder: React.FC<QuoteBuilderProps> = ({ onNavigate }) => {
-  const {
-    templates,
-    plans,
-    products,
-    customers,
-    discounts,
-    taxRules,
-    createSubscription,
-    addToast,
+  const { 
+    products, 
+    plans, 
+    discounts, 
+    taxes, 
+    customers, 
+    createSubscription, 
+    addToast 
   } = useApp();
 
-  const defaultTax = taxRules.find((t) => t.isDefault)?.rate || 10;
+  const [customerId, setCustomerId] = useState(customers[0]?.id || 'cust-1');
+  const [selectedPlanId, setSelectedPlanId] = useState(plans[0]?.id || 'plan-growth');
+  const [paymentTerms, setPaymentTerms] = useState<PaymentTerms>('Net 30');
+  const [discountCode, setDiscountCode] = useState('');
 
-  // Selected template & customer
-  const [selectedTemplateId, setSelectedTemplateId] = useState<string>('');
-  const [selectedCustomerId, setSelectedCustomerId] = useState<string>(customers[0]?.id || '');
-  const [selectedPlanId, setSelectedPlanId] = useState<string>(plans[0]?.id || '');
-  const [validityDays, setValidityDays] = useState<number>(30);
-  const [paymentTerms, setPaymentTerms] = useState<'Due on Receipt' | 'Net 15' | 'Net 30' | 'Net 60'>('Net 30');
-  const [discountCode, setDiscountCode] = useState<string>('');
-  const [appliedDiscount, setAppliedDiscount] = useState<{ code: string; amount: number; name: string } | null>(null);
-
-  // Line items state
-  const [lines, setLines] = useState<SubscriptionLine[]>([
+  const [lines, setLines] = useState<QuoteLine[]>([
     {
-      id: 'line-1',
+      id: 'ql-1',
       productId: products[0]?.id || 'prod-1',
-      productName: products[0]?.name || 'Brightloop ERP Platform',
-      variantName: products[0]?.variants[1]?.brand || 'Odoo Powered Edition (+560)',
-      variantPrice: products[0]?.variants[1]?.extraPrice || 560,
+      productName: products[0]?.name || 'BrightERP Core',
       quantity: 1,
-      unitPrice: (products[0]?.salesPrice || 450) + (products[0]?.variants[1]?.extraPrice || 560),
-      taxRate: defaultTax,
-      amount: (products[0]?.salesPrice || 450) + (products[0]?.variants[1]?.extraPrice || 560),
-    },
+      unitPrice: products[0]?.salesPrice || 1200,
+      variantPrice: 560,
+      variantName: 'Odoo Edition',
+      taxRate: 10,
+      amount: (products[0]?.salesPrice || 1200) + 560,
+    }
   ]);
 
-  // Load template preset
-  const handleTemplateChange = (templateId: string) => {
-    setSelectedTemplateId(templateId);
-    if (!templateId) return;
-
-    const tpl = templates.find((t) => t.id === templateId);
-    if (!tpl) return;
-
-    setSelectedPlanId(tpl.planId);
-    setValidityDays(tpl.validityDays);
-
-    const newLines: SubscriptionLine[] = tpl.defaultLines.map((def, idx) => {
-      const prod = products.find((p) => p.id === def.productId) || products[0];
-      const variant = prod.variants.find((v) => v.id === def.variantId);
-      const varPrice = variant ? variant.extraPrice : 0;
-      const unitPrice = prod.salesPrice + varPrice;
-
-      return {
-        id: `tpl-line-${Date.now()}-${idx}`,
-        productId: prod.id,
-        productName: prod.name,
-        variantName: variant ? `${variant.brand} (+${variant.extraPrice})` : undefined,
-        variantPrice: varPrice,
-        quantity: def.quantity,
-        unitPrice,
-        taxRate: defaultTax,
-        amount: unitPrice * def.quantity,
-      };
-    });
-
-    setLines(newLines);
-    addToast('info', 'Template Loaded', `Applied "${tpl.name}" with default product lines.`);
+  const selectedCustomer = customers.find(c => c.id === customerId) || {
+    id: 'cust-1',
+    name: 'Jane Doe',
+    company: 'Acme Corp',
+    email: 'billing@acme.com'
   };
 
+  const selectedPlan = plans.find(p => p.id === selectedPlanId) || plans[0];
+
   const handleAddLine = () => {
-    const prod = products[0];
-    const unitPrice = prod.salesPrice;
-    const newLine: SubscriptionLine = {
-      id: `line-${Date.now()}`,
+    const prod = products[0] || { id: 'prod-1', name: 'Software License', salesPrice: 500 };
+    const newLine: QuoteLine = {
+      id: `ql-${Date.now()}`,
       productId: prod.id,
       productName: prod.name,
-      variantName: undefined,
-      variantPrice: 0,
       quantity: 1,
-      unitPrice,
-      taxRate: defaultTax,
-      amount: unitPrice,
+      unitPrice: prod.salesPrice || 500,
+      variantPrice: 0,
+      variantName: 'Standard',
+      taxRate: 10,
+      amount: prod.salesPrice || 500,
     };
     setLines([...lines, newLine]);
   };
 
   const handleRemoveLine = (id: string) => {
     if (lines.length === 1) {
-      addToast('error', 'Minimum Requirement', 'A subscription must have at least one line item.');
+      addToast('A quote requires at least one product line.', 'error');
       return;
     }
-    setLines(lines.filter((l) => l.id !== id));
+    setLines(lines.filter(l => l.id !== id));
   };
 
-  const handleProductChange = (index: number, productId: string) => {
-    const prod = products.find((p) => p.id === productId);
+  const handleProductChange = (lineId: string, prodId: string) => {
+    const prod = products.find(p => p.id === prodId);
     if (!prod) return;
-
-    const newLines = [...lines];
-    newLines[index] = {
-      ...newLines[index],
-      productId: prod.id,
-      productName: prod.name,
-      variantName: undefined,
-      variantPrice: 0,
-      unitPrice: prod.salesPrice,
-      amount: prod.salesPrice * newLines[index].quantity,
-    };
-    setLines(newLines);
+    setLines(lines.map(l => {
+      if (l.id === lineId) {
+        const unit = prod.salesPrice || 500;
+        const total = (unit + l.variantPrice) * l.quantity;
+        return {
+          ...l,
+          productId: prod.id,
+          productName: prod.name,
+          unitPrice: unit,
+          amount: total,
+        };
+      }
+      return l;
+    }));
   };
 
-  const handleVariantChange = (index: number, variantId: string) => {
-    const currentLine = lines[index];
-    const prod = products.find((p) => p.id === currentLine.productId);
-    if (!prod) return;
-
-    const variant = prod.variants.find((v) => v.id === variantId);
-    const extraPrice = variant ? variant.extraPrice : 0;
-    const unitPrice = prod.salesPrice + extraPrice;
-
-    const newLines = [...lines];
-    newLines[index] = {
-      ...currentLine,
-      variantName: variant ? `${variant.brand} (+${extraPrice})` : undefined,
-      variantPrice: extraPrice,
-      unitPrice,
-      amount: unitPrice * currentLine.quantity,
-    };
-    setLines(newLines);
+  const handleQuantityChange = (lineId: string, qty: number) => {
+    const safeQty = Math.max(1, qty);
+    setLines(lines.map(l => {
+      if (l.id === lineId) {
+        const total = (l.unitPrice + l.variantPrice) * safeQty;
+        return { ...l, quantity: safeQty, amount: total };
+      }
+      return l;
+    }));
   };
 
-  const handleQuantityChange = (index: number, qty: number) => {
-    const validQty = Math.max(1, qty);
-    const newLines = [...lines];
-    newLines[index] = {
-      ...newLines[index],
-      quantity: validQty,
-      amount: newLines[index].unitPrice * validQty,
-    };
-    setLines(newLines);
+  const handleToggleVariant = (lineId: string, hasVariant: boolean) => {
+    setLines(lines.map(l => {
+      if (l.id === lineId) {
+        const extra = hasVariant ? 560 : 0;
+        const total = (l.unitPrice + extra) * l.quantity;
+        return {
+          ...l,
+          variantPrice: extra,
+          variantName: hasVariant ? 'Odoo Edition' : 'Standard',
+          amount: total,
+        };
+      }
+      return l;
+    }));
   };
 
-  // Calculations
-  const subtotal = lines.reduce((acc, l) => acc + l.amount, 0);
-  const totalQuantity = lines.reduce((acc, l) => acc + l.quantity, 0);
+  const subtotal = lines.reduce((sum, l) => sum + l.amount, 0);
 
-  // Apply discount rule (Scene 5)
-  const handleApplyDiscount = () => {
-    const rule = discounts.find(
-      (d) => d.code.toLowerCase() === discountCode.trim().toLowerCase() && d.isActive
-    );
+  const appliedDiscount = discounts.find(d => d.code.toUpperCase() === discountCode.trim().toUpperCase() && d.isActive);
+  let discountAmount = 0;
+  if (appliedDiscount) {
+    discountAmount = appliedDiscount.type === 'percentage' 
+      ? (subtotal * appliedDiscount.value) / 100 
+      : appliedDiscount.value;
+  }
 
-    if (!rule) {
-      addToast('error', 'Invalid Code', 'Discount code is invalid, inactive, or expired.');
-      return;
-    }
+  const taxableSubtotal = Math.max(0, subtotal - discountAmount);
+  const taxRate = taxes[0]?.rate || 10;
+  const taxAmount = (taxableSubtotal * taxRate) / 100;
+  const grandTotal = taxableSubtotal + taxAmount;
 
-    if (rule.minQuantity && totalQuantity < rule.minQuantity) {
-      addToast(
-        'error',
-        'Quantity Requirement Not Met',
-        `Discount "${rule.code}" requires minimum ${rule.minQuantity} items/seats (currently ${totalQuantity}).`
-      );
-      return;
-    }
-
-    if (rule.minPurchaseAmount && subtotal < rule.minPurchaseAmount) {
-      addToast(
-        'error',
-        'Minimum Spend Not Met',
-        `Discount requires minimum subtotal of $${rule.minPurchaseAmount} (currently $${subtotal}).`
-      );
-      return;
-    }
-
-    let calculatedDiscount = 0;
-    if (rule.type === 'percentage') {
-      calculatedDiscount = (subtotal * rule.value) / 100;
-    } else {
-      calculatedDiscount = Math.min(rule.value, subtotal);
-    }
-
-    setAppliedDiscount({
-      code: rule.code,
-      amount: calculatedDiscount,
-      name: rule.name,
-    });
-    addToast('success', 'Discount Applied', `Applied discount: -${calculatedDiscount.toLocaleString()}`);
-  };
-
-  const discountAmount = appliedDiscount ? appliedDiscount.amount : 0;
-  const taxableAmount = Math.max(0, subtotal - discountAmount);
-  const taxTotal = lines.reduce((acc, l) => acc + (l.amount * l.taxRate) / 100, 0);
-  const totalAmount = taxableAmount + taxTotal;
-
-  const handleSubmit = (initialStatus: 'Draft' | 'Quotation' | 'Confirmed') => {
-    const cust = customers.find((c) => c.id === selectedCustomerId) || customers[0];
-    const plan = plans.find((p) => p.id === selectedPlanId) || plans[0];
-
-    const expDate = new Date();
-    expDate.setFullYear(expDate.getFullYear() + 1);
-
-    const quoteExpDate = new Date();
-    quoteExpDate.setDate(quoteExpDate.getDate() + validityDays);
+  const handleConvertToSubscription = () => {
+    const today = new Date().toISOString().split('T')[0];
+    const expiry = new Date();
+    expiry.setFullYear(expiry.getFullYear() + 1);
 
     createSubscription({
-      customerId: cust.id,
-      customerName: cust.name,
-      customerEmail: cust.email,
-      planId: plan.id,
-      planName: plan.name,
-      startDate: new Date().toISOString().split('T')[0],
-      expiryDate: expDate.toISOString().split('T')[0],
+      customerId: selectedCustomer.id,
+      customerName: selectedCustomer.company || selectedCustomer.name,
+      customerEmail: selectedCustomer.email,
+      planId: selectedPlan?.id || 'plan-growth',
+      planName: selectedPlan?.name || 'Growth Business Tier',
+      startDate: today,
+      expiryDate: expiry.toISOString().split('T')[0],
       paymentTerms,
-      status: initialStatus,
-      lines,
+      status: 'Active',
       subtotal,
-      taxTotal,
       discountTotal: discountAmount,
-      totalAmount,
-      appliedDiscountCode: appliedDiscount?.code,
-      quotationValidityDays: validityDays,
-      quotationExpiresAt: quoteExpDate.toISOString().split('T')[0],
-      nextBillingDate: new Date().toISOString().split('T')[0],
-      notes: `Generated from template "${selectedTemplateId ? 'Enterprise Preset' : 'Custom Offer'}" with ${validityDays} days validity.`,
+      taxTotal: taxAmount,
+      totalAmount: grandTotal,
+      nextBillingDate: today,
+      lines: lines.map(l => ({
+        id: l.id,
+        productId: l.productId,
+        productName: l.productName,
+        variantPrice: l.variantPrice,
+        quantity: l.quantity,
+        unitPrice: l.unitPrice,
+        taxRate: l.taxRate,
+        amount: l.amount,
+      })),
     });
 
-    onNavigate('subscriptions');
+    addToast('Quote successfully converted to an Active Subscription!', 'success');
+    if (onNavigate) {
+      onNavigate('subscriptions');
+    }
   };
 
   return (
-    <div className="space-y-6 animate-in fade-in duration-300 text-slate-100">
-      {/* Top Banner */}
-      <div className="bg-slate-900 p-6 rounded-2xl border border-slate-800 shadow-xl flex flex-col md:flex-row md:items-center justify-between gap-4">
-        <div>
-          <div className="flex items-center gap-2 text-xs font-bold text-purple-400 uppercase tracking-wider mb-1">
-            <Sparkles className="w-4 h-4" />
-            <span>Scene 3: Sales Rep Offer & Quotation Templates</span>
+    <div className="space-y-6">
+      {/* 1. Header Banner */}
+      <div className="revops-card rounded-2xl p-6 lg:p-7 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-5 bg-white border border-slate-200">
+        <div className="space-y-1">
+          <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-indigo-50 border border-indigo-100 text-indigo-700 text-xs font-semibold">
+            <FileSpreadsheet className="w-3.5 h-3.5 text-indigo-600" />
+            <span>Sales Operations</span>
           </div>
-          <h1 className="text-2xl font-extrabold text-white tracking-tight">
-            Quotation & Offer Builder
+          <h1 className="text-2xl font-bold tracking-tight text-slate-900">
+            Quote Builder & Contract Generator
           </h1>
-          <p className="text-xs text-slate-400 mt-1">
-            Start from a standard template or craft a custom proposal with variants, taxes, and discounts.
+          <p className="text-sm text-slate-500">
+            Assemble multi-line quotes, apply recurring plan terms, and convert directly to subscriptions.
           </p>
         </div>
+
+        <button
+          onClick={handleConvertToSubscription}
+          className="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl font-semibold text-sm text-white bg-indigo-600 hover:bg-indigo-700 shadow-sm transition-all cursor-pointer active:scale-95"
+        >
+          <CheckCircle2 className="w-4 h-4" />
+          <span>Convert to Subscription</span>
+        </button>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Left Column: Form Details & Lines (2 cols) */}
+        {/* 2. Left 2 Columns: Quote Configuration */}
         <div className="lg:col-span-2 space-y-6">
-          {/* Template & Customer Preset Box */}
-          <div className="bg-slate-900 p-5 rounded-2xl border border-slate-800 shadow-xl space-y-4">
-            <h3 className="text-sm font-bold text-white flex items-center gap-2">
-              <FileSpreadsheet className="w-4 h-4 text-purple-400" />
-              <span>1. Choose Template & Client</span>
-            </h3>
+          <div className="revops-card rounded-2xl p-6 bg-white border border-slate-200 space-y-5">
+            <h2 className="text-sm font-bold uppercase tracking-wider text-slate-500">
+              Contract Header
+            </h2>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
               <div>
-                <label className="block text-xs font-semibold text-slate-300 mb-1">
-                  Start from Quotation Template
+                <label className="block text-xs font-semibold text-slate-700 mb-1.5">
+                  Customer
                 </label>
                 <select
-                  value={selectedTemplateId}
-                  onChange={(e) => handleTemplateChange(e.target.value)}
-                  className="w-full text-xs rounded-xl border border-slate-700 px-3 py-2 bg-slate-950 text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
-                >
-                  <option value="">Blank Offer (Custom)</option>
-                  {templates.map((t) => (
-                    <option key={t.id} value={t.id}>
-                      {t.name} ({t.validityDays} days validity)
-                    </option>
-                  ))}
-                </select>
-              </div>
-
-              <div>
-                <label className="block text-xs font-semibold text-slate-300 mb-1">
-                  Select Customer
-                </label>
-                <select
-                  value={selectedCustomerId}
-                  onChange={(e) => setSelectedCustomerId(e.target.value)}
-                  className="w-full text-xs rounded-xl border border-slate-700 px-3 py-2 bg-slate-950 text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
+                  value={customerId}
+                  onChange={(e) => setCustomerId(e.target.value)}
+                  className="w-full px-3 py-2 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-800 focus:outline-none focus:border-indigo-500 transition-colors"
                 >
                   {customers.map((c) => (
                     <option key={c.id} value={c.id}>
-                      {c.company} ({c.name})
+                      {c.company || c.name} ({c.email})
                     </option>
                   ))}
                 </select>
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-slate-300 mb-1">
-                  Billing Plan Base
+                <label className="block text-xs font-semibold text-slate-700 mb-1.5">
+                  Subscription Tier
                 </label>
                 <select
                   value={selectedPlanId}
                   onChange={(e) => setSelectedPlanId(e.target.value)}
-                  className="w-full text-xs rounded-xl border border-slate-700 px-3 py-2 bg-slate-950 text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
+                  className="w-full px-3 py-2 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-800 focus:outline-none focus:border-indigo-500 transition-colors"
                 >
                   {plans.map((p) => (
                     <option key={p.id} value={p.id}>
-                      {p.name} ({p.billingFrequency} - ${p.cost})
+                      {p.name} (${p.cost}/{p.billingFrequency})
                     </option>
                   ))}
                 </select>
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-slate-300 mb-1">
+                <label className="block text-xs font-semibold text-slate-700 mb-1.5">
                   Payment Terms
                 </label>
                 <select
                   value={paymentTerms}
-                  onChange={(e) => setPaymentTerms(e.target.value as any)}
-                  className="w-full text-xs rounded-xl border border-slate-700 px-3 py-2 bg-slate-950 text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
+                  onChange={(e) => setPaymentTerms(e.target.value as PaymentTerms)}
+                  className="w-full px-3 py-2 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-800 focus:outline-none focus:border-indigo-500 transition-colors"
                 >
                   <option value="Due on Receipt">Due on Receipt</option>
                   <option value="Net 15">Net 15 Days</option>
@@ -351,202 +271,180 @@ export const QuoteBuilder: React.FC<QuoteBuilderProps> = ({ onNavigate }) => {
             </div>
           </div>
 
-          {/* Line Items Builder (Products & Variants) */}
-          <div className="bg-slate-900 p-5 rounded-2xl border border-slate-800 shadow-xl space-y-4">
-            <div className="flex items-center justify-between">
-              <h3 className="text-sm font-bold text-white flex items-center gap-2">
-                <Building className="w-4 h-4 text-purple-400" />
-                <span>2. Products, Variants & Seats</span>
-              </h3>
+          <div className="revops-card rounded-2xl overflow-hidden bg-white border border-slate-200">
+            <div className="p-5 border-b border-slate-200 flex items-center justify-between">
+              <div>
+                <h2 className="text-sm font-bold text-slate-900">Quotation Line Items</h2>
+                <p className="text-xs text-slate-500">Products, add-on variants, and seat allocations</p>
+              </div>
               <button
                 onClick={handleAddLine}
-                className="px-3 py-1.5 bg-purple-950/60 hover:bg-purple-900 border border-purple-800/60 text-purple-300 text-xs font-bold rounded-xl transition flex items-center gap-1.5"
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold text-indigo-700 bg-indigo-50 hover:bg-indigo-100 border border-indigo-200 transition-colors cursor-pointer"
               >
                 <Plus className="w-3.5 h-3.5" />
-                <span>Add Product Line</span>
+                <span>Add Item</span>
               </button>
             </div>
 
-            <div className="space-y-3">
-              {lines.map((line, idx) => {
-                const currentProd = products.find((p) => p.id === line.productId);
-                return (
-                  <div
-                    key={line.id}
-                    className="p-3.5 rounded-xl border border-slate-800 bg-slate-950/60 space-y-3"
-                  >
-                    <div className="grid grid-cols-1 sm:grid-cols-12 gap-3 items-center">
-                      {/* Product Selector */}
-                      <div className="sm:col-span-5">
-                        <label className="block text-[11px] font-semibold text-slate-400 mb-1">
-                          Product
-                        </label>
+            <div className="overflow-x-auto">
+              <table className="w-full text-left border-collapse">
+                <thead>
+                  <tr className="border-b border-slate-200 bg-slate-50 text-[11px] font-bold uppercase tracking-wider text-slate-500">
+                    <th className="py-3 px-5">Product</th>
+                    <th className="py-3 px-5">Odoo Variant (+$560)</th>
+                    <th className="py-3 px-4 w-20">Qty</th>
+                    <th className="py-3 px-4 text-right">Unit Price</th>
+                    <th className="py-3 px-5 text-right">Total</th>
+                    <th className="py-3 px-3 text-center"></th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-100 text-xs">
+                  {lines.map((line) => (
+                    <tr key={line.id} className="hover:bg-slate-50/70">
+                      <td className="py-3.5 px-5">
                         <select
                           value={line.productId}
-                          onChange={(e) => handleProductChange(idx, e.target.value)}
-                          className="w-full text-xs rounded-xl border border-slate-700 px-2.5 py-1.5 bg-slate-900 text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
+                          onChange={(e) => handleProductChange(line.id, e.target.value)}
+                          className="w-full px-2.5 py-1.5 rounded-lg bg-slate-50 border border-slate-200 text-xs text-slate-800 font-medium focus:outline-none focus:border-indigo-500"
                         >
                           {products.map((p) => (
                             <option key={p.id} value={p.id}>
-                              {p.name} (${p.salesPrice})
+                              {p.name}
                             </option>
                           ))}
                         </select>
-                      </div>
+                      </td>
 
-                      {/* Variant Selector (Scene 2: Odoo brand adds 560) */}
-                      <div className="sm:col-span-4">
-                        <label className="block text-[11px] font-semibold text-slate-400 mb-1">
-                          Brand / Variant
+                      <td className="py-3.5 px-5">
+                        <label className="inline-flex items-center gap-2 cursor-pointer">
+                          <input
+                            type="checkbox"
+                            checked={line.variantPrice > 0}
+                            onChange={(e) => handleToggleVariant(line.id, e.target.checked)}
+                            className="w-4 h-4 rounded text-indigo-600 focus:ring-indigo-500 border-slate-300 cursor-pointer"
+                          />
+                          <span className="text-slate-600 text-xs">
+                            {line.variantPrice > 0 ? 'Enterprise Edition' : 'Standard'}
+                          </span>
                         </label>
-                        <select
-                          onChange={(e) => handleVariantChange(idx, e.target.value)}
-                          className="w-full text-xs rounded-xl border border-slate-700 px-2.5 py-1.5 bg-slate-900 text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
-                        >
-                          <option value="">No Variant (Standard Base)</option>
-                          {currentProd?.variants.map((v) => (
-                            <option key={v.id} value={v.id}>
-                              {v.brand} (+${v.extraPrice})
-                            </option>
-                          ))}
-                        </select>
-                      </div>
+                      </td>
 
-                      {/* Quantity */}
-                      <div className="sm:col-span-2">
-                        <label className="block text-[11px] font-semibold text-slate-400 mb-1">
-                          Seats / Qty
-                        </label>
+                      <td className="py-3.5 px-4">
                         <input
                           type="number"
                           min="1"
                           value={line.quantity}
-                          onChange={(e) => handleQuantityChange(idx, parseInt(e.target.value) || 1)}
-                          className="w-full text-xs rounded-xl border border-slate-700 px-2.5 py-1.5 bg-slate-900 text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
+                          onChange={(e) => handleQuantityChange(line.id, parseInt(e.target.value) || 1)}
+                          className="w-16 px-2 py-1.5 rounded-lg bg-slate-50 border border-slate-200 text-center font-mono font-semibold text-slate-800 focus:outline-none focus:border-indigo-500"
                         />
-                      </div>
+                      </td>
 
-                      {/* Remove Button */}
-                      <div className="sm:col-span-1 flex justify-end pt-5">
+                      <td className="py-3.5 px-4 text-right font-mono text-slate-600 tabular-nums">
+                        ${(line.unitPrice + line.variantPrice).toFixed(2)}
+                      </td>
+
+                      <td className="py-3.5 px-5 text-right font-mono font-bold text-slate-900 tabular-nums">
+                        ${line.amount.toFixed(2)}
+                      </td>
+
+                      <td className="py-3.5 px-3 text-center">
                         <button
                           onClick={() => handleRemoveLine(line.id)}
-                          className="text-slate-400 hover:text-rose-400 p-1.5 rounded-lg transition"
-                          title="Remove Line"
+                          className="p-1 rounded-md text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition-colors cursor-pointer"
                         >
-                          <Trash2 className="w-4 h-4" />
+                          <Trash2 className="w-3.5 h-3.5" />
                         </button>
-                      </div>
-                    </div>
-
-                    <div className="flex items-center justify-between text-xs pt-1 border-t border-slate-800 text-slate-400">
-                      <span>
-                        Unit Price: <strong className="text-slate-200">${line.unitPrice.toLocaleString()}</strong> (incl. variant)
-                      </span>
-                      <span>
-                        Line Total: <strong className="text-white">${line.amount.toLocaleString()}</strong>
-                      </span>
-                    </div>
-                  </div>
-                );
-              })}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
             </div>
           </div>
         </div>
 
-        {/* Right Column: Pricing Summary & Actions (1 col) */}
+        {/* 3. Right Column: Pricing Breakdown & Settlement */}
         <div className="space-y-6">
-          <div className="bg-slate-900 p-5 rounded-2xl border border-slate-800 shadow-xl space-y-4">
-            <h3 className="text-sm font-bold text-white flex items-center gap-2">
-              <Percent className="w-4 h-4 text-purple-400" />
-              <span>3. Discounts & Pricing</span>
-            </h3>
+          <div className="revops-card rounded-2xl p-6 bg-white border border-slate-200 space-y-5">
+            <h2 className="text-sm font-bold uppercase tracking-wider text-slate-500">
+              Contract Summary
+            </h2>
 
-            {/* Discount Code Input (Scene 5) */}
             <div>
-              <label className="block text-xs font-semibold text-slate-300 mb-1">
-                Promotional Discount Code
+              <label className="block text-xs font-semibold text-slate-700 mb-1.5 flex items-center gap-1.5">
+                <Tag className="w-3.5 h-3.5 text-indigo-600" />
+                <span>Apply Promo Code</span>
               </label>
               <div className="flex gap-2">
                 <input
                   type="text"
-                  placeholder="e.g. VOLUME20"
+                  placeholder="e.g. BRIGHT20"
                   value={discountCode}
-                  onChange={(e) => setDiscountCode(e.target.value)}
-                  className="w-full text-xs rounded-xl border border-slate-700 bg-slate-950 text-white px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-purple-500 uppercase"
+                  onChange={(e) => setDiscountCode(e.target.value.toUpperCase())}
+                  className="flex-1 px-3 py-1.5 rounded-xl bg-slate-50 border border-slate-200 text-xs font-mono uppercase text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-indigo-500"
                 />
                 <button
                   type="button"
-                  onClick={handleApplyDiscount}
-                  className="px-3 py-1.5 bg-purple-600 hover:bg-purple-700 text-white font-semibold text-xs rounded-xl transition shrink-0"
+                  onClick={() => {
+                    if (appliedDiscount) {
+                      addToast(`Applied coupon ${appliedDiscount.code}: ${appliedDiscount.value}% off!`, 'success');
+                    } else if (discountCode) {
+                      addToast(`Invalid code "${discountCode}". Try BRIGHT20`, 'error');
+                    }
+                  }}
+                  className="px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold border border-slate-200 transition-colors cursor-pointer"
                 >
                   Apply
                 </button>
               </div>
-              <p className="text-[10px] text-slate-400 mt-1">
-                Tip: Try <strong>VOLUME20</strong> (&ge;5 seats) or <strong>ODOOFEST100</strong>
-              </p>
+              {appliedDiscount && (
+                <p className="text-[11px] text-emerald-600 mt-1 font-medium">
+                  ✓ Valid discount: {appliedDiscount.name} ({appliedDiscount.value}% off)
+                </p>
+              )}
             </div>
 
-            {/* Financial Summary Breakdown */}
-            <div className="p-4 bg-slate-950/60 rounded-xl border border-slate-800 space-y-2.5 text-xs">
-              <div className="flex justify-between text-slate-400">
-                <span>Subtotal ({totalQuantity} items):</span>
-                <span className="font-mono text-slate-200 font-semibold">${subtotal.toLocaleString()}</span>
+            <div className="border-t border-slate-100 pt-4 space-y-2.5 text-xs">
+              <div className="flex justify-between text-slate-500">
+                <span>Subtotal</span>
+                <span className="font-mono text-slate-900 font-medium tabular-nums">${subtotal.toFixed(2)}</span>
               </div>
 
-              {appliedDiscount && (
-                <div className="flex justify-between text-emerald-400 font-semibold">
-                  <span>Discount ({appliedDiscount.code}):</span>
-                  <span className="font-mono">-${appliedDiscount.amount.toLocaleString()}</span>
+              {discountAmount > 0 && (
+                <div className="flex justify-between text-emerald-600">
+                  <span>Discount ({appliedDiscount?.code})</span>
+                  <span className="font-mono font-medium tabular-nums">-${discountAmount.toFixed(2)}</span>
                 </div>
               )}
 
-              <div className="flex justify-between text-slate-400">
-                <span>Estimated Tax (10% standard):</span>
-                <span className="font-mono text-slate-200 font-semibold">${taxTotal.toLocaleString()}</span>
+              <div className="flex justify-between text-slate-500">
+                <span>Sales Tax ({taxRate}%)</span>
+                <span className="font-mono text-slate-900 font-medium tabular-nums">${taxAmount.toFixed(2)}</span>
               </div>
 
-              <div className="h-px bg-slate-800" />
-
-              <div className="flex justify-between text-base font-extrabold text-white">
-                <span>Offer Total:</span>
-                <span className="font-mono text-purple-400">${totalAmount.toLocaleString()}</span>
-              </div>
-            </div>
-
-            {/* Validity settings */}
-            <div className="p-3 bg-purple-950/40 rounded-xl border border-purple-800/60 text-xs space-y-1">
-              <div className="font-bold text-purple-300 flex items-center gap-1.5">
-                <Calendar className="w-3.5 h-3.5 text-purple-400" />
-                <span>Quotation Validity Period</span>
-              </div>
-              <div className="text-[11px] text-purple-200">
-                Offer remains valid for <strong>{validityDays} days</strong> from issuance.
+              <div className="border-t border-slate-200 pt-3 flex justify-between items-baseline">
+                <div>
+                  <span className="text-sm font-bold text-slate-900 block">Total Due</span>
+                  <span className="text-[10px] text-slate-400">Billed {selectedPlan?.billingFrequency || 'monthly'}</span>
+                </div>
+                <span className="text-2xl font-bold font-mono text-indigo-600 tabular-nums">
+                  ${grandTotal.toFixed(2)}
+                </span>
               </div>
             </div>
 
-            {/* Action buttons */}
-            <div className="space-y-2 pt-2">
-              <button
-                type="button"
-                onClick={() => handleSubmit('Quotation')}
-                className="w-full py-2.5 px-4 bg-purple-600 hover:bg-purple-700 text-white font-bold text-xs rounded-xl transition shadow-md shadow-purple-600/30 flex items-center justify-center gap-1.5"
-              >
-                <span>Send as Official Quotation</span>
-                <ArrowRight className="w-3.5 h-3.5" />
-              </button>
-
-              <button
-                type="button"
-                onClick={() => handleSubmit('Draft')}
-                className="w-full py-2 px-4 bg-slate-800 hover:bg-slate-700 text-slate-200 font-semibold text-xs rounded-xl transition text-center"
-              >
-                Save as Draft
-              </button>
-            </div>
+            <button
+              onClick={handleConvertToSubscription}
+              className="w-full py-3 rounded-xl font-bold text-sm text-white bg-indigo-600 hover:bg-indigo-700 shadow-sm transition-all cursor-pointer flex items-center justify-center gap-2 active:scale-98"
+            >
+              <span>Convert to Subscription</span>
+              <ArrowRight className="w-4 h-4" />
+            </button>
           </div>
         </div>
       </div>
     </div>
   );
 };
+
+export default QuoteBuilder;
